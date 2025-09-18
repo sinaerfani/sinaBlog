@@ -5,18 +5,18 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class User extends BaseEntity{
-private String userName;
+private String username;
 private String email;
 private String password;
 private String fullName;
-private Role roles;
+private Role role;
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String userName) {
+        this.username = userName;
     }
 
     public String getEmail() {
@@ -43,11 +43,11 @@ private Role roles;
         this.fullName = fullName;
     }
 @ManyToOne
-    public Role getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Role roles) {
-        this.roles = roles;
+    public void setRole(Role roles) {
+        this.role = roles;
     }
 }

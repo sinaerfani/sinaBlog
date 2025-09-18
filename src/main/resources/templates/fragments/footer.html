@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="bg-dark text-light py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <!-- About Section -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="fw-bold">درباره وبلاگ</h5>
+                <p class="text-muted">
+                    وبلاگ شخصی برای به اشتراک گذاری مقالات و تجربیات در زمینه برنامه‌نویسی و تکنولوژی
+                </p>
+                <div class="social-links">
+                    <a href="#" class="text-light me-3"><i class="bi bi-telegram fs-4"></i></a>
+                    <a href="#" class="text-light me-3"><i class="bi bi-instagram fs-4"></i></a>
+                    <a href="#" class="text-light me-3"><i class="bi bi-linkedin fs-4"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-github fs-4"></i></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h5 class="fw-bold">لینک‌های سریع</h5>
+                <ul class="list-unstyled">
+                    <li><a th:href="@{/}" class="text-muted text-decoration-none">خانه</a></li>
+                    <li><a th:href="@{/posts}" class="text-muted text-decoration-none">مقالات</a></li>
+                    <li><a th:href="@{/categories}" class="text-muted text-decoration-none">دسته‌بندی‌ها</a></li>
+                    <li><a th:href="@{/tags}" class="text-muted text-decoration-none">تگ‌ها</a></li>
+                </ul>
+            </div>
+
+            <!-- Categories -->
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h5 class="fw-bold">دسته‌بندی‌ها</h5>
+                <ul class="list-unstyled">
+                    <li th:each="category : ${categories}">
+                        <a th:href="@{/category/{id}(id=${category.id})}"
+                           class="text-muted text-decoration-none">
+                            <i class="bi bi-folder2-open me-1"></i>
+                            <span th:text="${category.name}"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-md-3">
+                <h5 class="fw-bold">تماس با ما</h5>
+                <ul class="list-unstyled">
+                    <li class="text-muted mb-2">
+                        <i class="bi bi-envelope me-2"></i>email@example.com
+                    </li>
+                    <li class="text-muted mb-2">
+                        <i class="bi bi-telephone me-2"></i>+98 912 345 6789
+                    </li>
+                    <li class="text-muted">
+                        <i class="bi bi-geo-alt me-2"></i>تهران، ایران
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="my-4 bg-secondary">
+
+        <!-- Copyright -->
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="text-muted mb-0">&copy; 2024 وبلاگ سینا. تمام حقوق محفوظ است.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <p class="text-muted mb-0">
+                    ساخته شده با <i class="bi bi-heart-fill text-danger"></i> و Spring Boot
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
