@@ -15,7 +15,7 @@ public class Post extends BaseEntity {
     private PostStatus status;
     private User author;
     private Category category;
-    private List<Tag>tag;
+    private List<Tag> tags;
 
     private LocalDateTime publishedAt;
 
@@ -82,12 +82,12 @@ public class Post extends BaseEntity {
         return publishedAt;
     }
 @ManyToMany
-    public List<Tag> getTag() {
-        return tag;
+    public List<Tag> getTags() {
+        return tags;
     }
 
-    public void setTag(List<Tag> tag) {
-        this.tag = tag;
+    public void setTags(List<Tag> tag) {
+        this.tags = tag;
     }
 
     public void setPublishedAt(LocalDateTime publishedAt) {

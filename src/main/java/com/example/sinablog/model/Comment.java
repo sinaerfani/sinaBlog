@@ -1,12 +1,14 @@
 package com.example.sinablog.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Comment extends BaseEntity{
     private String content;
     private String authorName;
     private String authorEmail;
+    private Post post;
     private boolean approved;
 
     public String getContent() {
@@ -31,6 +33,14 @@ public class Comment extends BaseEntity{
 
     public void setAuthorEmail(String authorEmail) {
         this.authorEmail = authorEmail;
+    }
+@ManyToOne
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public boolean isApproved() {

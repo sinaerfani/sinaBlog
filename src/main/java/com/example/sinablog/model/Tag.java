@@ -6,17 +6,17 @@ import java.util.List;
 
 @Entity
 public class Tag {
-    private int id;
+    private Long id;
     private String name;
     private String slug;
     private List<Post>posts;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
