@@ -6,10 +6,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 @Service
+
 public class CustomUserDetailService implements UserDetailsService {
-     private final UserRepository userRepository;
+
+    private final UserRepository userRepository;
 
     public CustomUserDetailService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -17,12 +18,18 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        var user = userRepository.findByUsernameAndDisableDateIsNull(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        if (!user.isEnabled()) {
+            throw new UsernameNotFoundException("User account is disabled");
+        }
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(username)
                 .password(user.getPassword())
-                .roles(user.getRole().getName().name())
+                .roles(user.getRole().getName().name().replace("ROLE_", ""))
+                .disabled(!user.isEnabled())
                 .build();
     }
 }

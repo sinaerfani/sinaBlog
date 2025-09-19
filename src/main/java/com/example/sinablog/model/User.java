@@ -4,12 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class User extends BaseEntity{
-private String username;
-private String email;
-private String password;
-private String fullName;
-private Role role;
+public class User extends BaseEntity {
+    private String username;
+    private String email;
+    private String password;
+    private String fullName;
+    private Role role;
+    private boolean enabled = true;
 
     public String getUsername() {
         return username;
@@ -42,12 +43,21 @@ private Role role;
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-@ManyToOne
+
+    @ManyToOne
     public Role getRole() {
         return role;
     }
 
     public void setRole(Role roles) {
         this.role = roles;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
