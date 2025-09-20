@@ -81,7 +81,8 @@ public class Post extends BaseEntity {
     public LocalDateTime getPublishedAt() {
         return publishedAt;
     }
-@ManyToMany
+
+    @ManyToMany
     public List<Tag> getTags() {
         return tags;
     }

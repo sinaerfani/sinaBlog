@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Category {
+public class Category extends  BaseEntity {
 
     private Long id;
     private String name;
