@@ -8,19 +8,9 @@ import jakarta.persistence.Id;
 @Entity
 public class Category extends  BaseEntity {
 
-    private Long id;
     private String name;
     private String slug;
     private String description;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

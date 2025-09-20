@@ -11,43 +11,48 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    // یافتن دسته‌بندی فعال بر اساس ID
+    // ==================== دسته‌بندی‌های فعال ====================
+
     Optional<Category> findByIdAndDisableDateIsNull(Long id);
-
-    // یافتن دسته‌بندی بر اساس نام
     Optional<Category> findByNameAndDisableDateIsNull(String name);
-
-    // یافتن دسته‌بندی بر اساس slug
     Optional<Category> findBySlugAndDisableDateIsNull(String slug);
 
-    // بررسی وجود دسته‌بندی بر اساس نام
-    boolean existsByNameAndDisableDateIsNull(String name);
+    List<Category> findByDisableDateIsNull();
+    Page<Category> findByDisableDateIsNull(Pageable pageable);
 
-    // بررسی وجود دسته‌بندی بر اساس slug
-    boolean existsBySlugAndDisableDateIsNull(String slug);
-
-    // دریافت همه دسته‌بندی‌های فعال
-    List<Category> findAllByDisableDateIsNull();
-
-    // دریافت همه دسته‌بندی‌های فعال با صفحه‌بندی
-    Page<Category> findAllByDisableDateIsNull(Pageable pageable);
-
-    // جستجوی دسته‌بندی‌ها بر اساس نام
-    List<Category> findByNameContainingIgnoreCaseAndDisableDateIsNull(String name);
-
-    // جستجوی دسته‌بندی‌ها بر اساس slug
+    List<Category> findByNameContainingAndDisableDateIsNull(String name);
     List<Category> findBySlugContainingAndDisableDateIsNull(String slug);
+    List<Category> findByDescriptionContainingAndDisableDateIsNull(String description);
 
-    // دریافت دسته‌بندی‌های حذف شده
+    List<Category> findByDisableDateIsNullOrderByNameAsc();
+    List<Category> findByDisableDateIsNullOrderByCreatedAtDesc();
+
+    // ==================== دسته‌بندی‌های حذف شده ====================
+
     List<Category> findByDisableDateIsNotNull();
+    Page<Category> findByDisableDateIsNotNull(Pageable pageable);
 
-    // شمارش دسته‌بندی‌های فعال
+    // ==================== شمارش‌ها ====================
+
     long countByDisableDateIsNull();
-
-    // شمارش دسته‌بندی‌های حذف شده
     long countByDisableDateIsNotNull();
 
+    // ==================== بررسی وجود ====================
+
+    boolean existsByNameAndDisableDateIsNull(String name);
+    boolean existsBySlugAndDisableDateIsNull(String slug);
+    boolean existsByNameAndIdNotAndDisableDateIsNull(String name, Long id);
+    boolean existsBySlugAndIdNotAndDisableDateIsNull(String slug, Long id);
+
+    // ==================== جستجوی پیشرفته ====================
+
+    @Query("SELECT c FROM Category c WHERE " +
+            "(LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+            "c.disableDate IS NULL")
+    List<Category> searchActiveCategories(@Param("keyword") String keyword);
 }
