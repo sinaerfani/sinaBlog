@@ -1,373 +1,199 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="fa" dir="rtl">
+<html lang="fa" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${post.title} + ' - وبلاگ سینا'">جزئیات پست - وبلاگ سینا</title>
+    <title>جزئیات پست - سینا بلاگ</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        :root {
-            --primary-color: #4fc3f7;
-            --secondary-color: #e3f2fd;
-            --accent-color: #29b6f6;
-            --text-color: #37474f;
-            --light-bg: #fafafa;
-        }
-
         body {
-            background-color: var(--light-bg);
-            color: var(--text-color);
-            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.8;
+            font-family: 'Vazir', sans-serif;
+            background-color: #f8f9fa;
+            direction: rtl;
+            text-align: right;
         }
-
-        .post-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-            color: white;
-            padding: 80px 0 40px 0;
-            margin-bottom: 40px;
-        }
-
         .post-content {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            padding: 40px;
-            margin-top: -60px;
-            position: relative;
-        }
-
-        .post-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            background: var(--secondary-color);
-            padding: 8px 15px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-        }
-
-        .meta-item i {
-            margin-left: 5px;
-            color: var(--accent-color);
-        }
-
-        .post-title {
-            font-weight: 800;
-            line-height: 1.3;
-            margin-bottom: 20px;
-            color: var(--text-color);
-        }
-
-        .post-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin: 30px 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .post-body {
+            line-height: 2;
             font-size: 1.1rem;
-            color: #455a64;
+            text-align: justify;
         }
-
-        .post-body p {
-            margin-bottom: 1.5rem;
+        .post-header {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
         }
-
-        .post-body h2, .post-body h3, .post-body h4 {
-            color: var(--accent-color);
-            margin: 2rem 0 1rem 0;
-            font-weight: 700;
-        }
-
-        .post-body blockquote {
-            border-right: 4px solid var(--accent-color);
-            background: var(--secondary-color);
-            padding: 20px;
-            margin: 30px 0;
-            border-radius: 8px;
-            font-style: italic;
-        }
-
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 30px 0;
-        }
-
-        .tag {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            text-decoration: none;
-            transition: transform 0.2s ease;
-        }
-
-        .tag:hover {
-            transform: translateY(-2px);
-            color: white;
-        }
-
-        .author-card {
-            background: var(--secondary-color);
-            border-radius: 12px;
-            padding: 25px;
-            margin: 40px 0;
-        }
-
-        .comments-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 40px 0;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        }
-
         .comment-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            background: #fafafa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
         }
-
-        .comment-form {
-            background: var(--secondary-color);
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 30px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #29b6f6 0%, #039be5 100%);
-        }
-
-        .share-buttons {
+        .loading {
             display: flex;
-            gap: 10px;
-            margin: 30px 0;
-        }
-
-        .share-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: transform 0.2s ease;
+            align-items: center;
+            height: 200px;
         }
-
-        .share-btn:hover {
-            transform: scale(1.1);
-            color: white;
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
         }
-
-        @media (max-width: 768px) {
-            .post-header {
-                padding: 60px 0 30px 0;
-            }
-
-            .post-content {
-                padding: 25px;
-                margin-top: -40px;
-            }
-
-            .post-image {
-                height: 300px;
-            }
-
-            .post-meta {
-                justify-content: center;
-            }
-
-            .post-title {
-                font-size: 1.8rem;
-            }
+        .category-badge {
+            font-size: 0.8rem;
+            margin-left: 5px;
         }
-
-        @media (max-width: 576px) {
-            .post-header {
-                padding: 40px 0 20px 0;
-            }
-
-            .post-title {
-                font-size: 1.5rem;
-            }
-
-            .post-image {
-                height: 250px;
-            }
-
-            .post-body {
-                font-size: 1rem;
-            }
+        .login-prompt {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .comment-actions {
+            border-top: 1px solid #e9ecef;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        .pending-badge {
+            background-color: #ffc107;
+            color: #000;
         }
     </style>
 </head>
 <body>
-<!-- Include Header -->
+<!-- Header -->
 <div th:replace="fragments/header :: header"></div>
 
-<!-- Post Header -->
-<section class="post-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <div class="post-meta justify-content-center">
-                    <div class="meta-item">
-                        <i class="bi bi-folder"></i>
-                        <span th:text="${post.category?.name}">دسته‌بندی</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="bi bi-clock"></i>
-                        <span th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy')}">تاریخ</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="bi bi-eye"></i>
-                        <span th:text="${post.views} + ' بازدید'">بازدید</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="bi bi-chat"></i>
-                        <span th:text="${post.comments?.size()} + ' نظر'">نظرات</span>
-                    </div>
-                </div>
-                <h1 class="post-title" th:text="${post.title}">عنوان پست</h1>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Main Content -->
-<div class="container">
+<div class="container mt-4">
     <div class="row">
         <!-- Post Content -->
         <div class="col-lg-8">
-            <article class="post-content">
-                <!-- Post Image -->
-                <img th:if="${post.image}" th:src="@{/images/posts/} + ${post.image}"
-                     alt="Post Image" class="post-image">
-
-                <!-- Post Body -->
-                <div class="post-body" th:utext="${post.content}">
-                    محتوای پست اینجا نمایش داده می‌شود...
+            <!-- Loading -->
+            <div id="loading" class="loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">در حال بارگذاری...</span>
                 </div>
+            </div>
 
-                <!-- Tags -->
-                <div th:if="${not #lists.isEmpty(post.tags)}" class="tags-container">
-                    <th:block th:each="tag : ${post.tags}">
-                        <a th:href="@{/tag/{id}(id=${tag.id})}" class="tag">
-                            <i class="bi bi-tag"></i> <span th:text="${tag.name}"></span>
-                        </a>
-                    </th:block>
-                </div>
+            <!-- Error Message -->
+            <div id="error-message" class="error-message d-none">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <p>خطا در بارگذاری پست. لطفاً دوباره تلاش کنید.</p>
+                <button class="btn btn-primary mt-2" onclick="loadPost()">تلاش مجدد</button>
+            </div>
 
-                <!-- Share Buttons -->
-                <div class="share-buttons">
-                    <a href="#" class="share-btn" style="background: #3b5998;">
-                        <i class="bi bi-facebook"></i>
-                    </a>
-                    <a href="#" class="share-btn" style="background: #1da1f2;">
-                        <i class="bi bi-twitter"></i>
-                    </a>
-                    <a href="#" class="share-btn" style="background: #0077b5;">
-                        <i class="bi bi-linkedin"></i>
-                    </a>
-                    <a href="#" class="share-btn" style="background: #25d366;">
-                        <i class="bi bi-whatsapp"></i>
-                    </a>
-                    <a href="#" class="share-btn" style="background: #0088cc;">
-                        <i class="bi bi-telegram"></i>
-                    </a>
-                </div>
-
-                <!-- Author Info -->
-                <div class="author-card">
-                    <div class="row align-items-center">
-                        <div class="col-md-3 text-center">
-                            <img src="/images/avatar.jpg" alt="Author"
-                                 class="rounded-circle img-fluid" width="100" height="100">
+            <!-- Post Content -->
+            <div id="post-container" class="d-none">
+                <article>
+                    <div class="post-header">
+                        <h1 id="post-title" class="mb-3"></h1>
+                        <div class="d-flex align-items-center text-muted mb-3">
+                            <small>
+                                <i class="bi bi-calendar-event"></i>
+                                <span id="post-date"></span>
+                            </small>
+                            <small class="me-3">
+                                <i class="bi bi-person"></i>
+                                <span id="post-author"></span>
+                            </small>
+                            <small>
+                                <i class="bi bi-eye"></i>
+                                <span id="post-views">0</span> بازدید
+                            </small>
+                            <small class="me-3">
+                                <i class="bi bi-chat"></i>
+                                <span id="post-comments-count">0</span> نظر
+                            </small>
                         </div>
-                        <div class="col-md-9">
-                            <h4 th:text="${post.author?.fullName}">نام نویسنده</h4>
-                            <p class="text-muted mb-2" th:text="${post.author?.bio ?: 'نویسنده وبلاگ سینا'}">بیوگرافی نویسنده</p>
-                            <div class="d-flex gap-3">
-                                <a href="#" class="text-primary"><i class="bi bi-twitter"></i></a>
-                                <a href="#" class="text-primary"><i class="bi bi-linkedin"></i></a>
-                                <a href="#" class="text-primary"><i class="bi bi-github"></i></a>
-                            </div>
+                        <div id="post-categories"></div>
+                    </div>
+
+                    <div id="post-content" class="post-content mb-4"></div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-outline-primary btn-sm me-2" onclick="likePost()">
+                                <i class="bi bi-hand-thumbs-up"></i>
+                                <span id="like-count">0</span>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="sharePost()">
+                                <i class="bi bi-share"></i> اشتراک‌گذاری
+                            </button>
+                        </div>
+                        <div id="edit-buttons" class="d-none">
+                            <a id="edit-post-btn" class="btn btn-warning btn-sm me-2">
+                                <i class="bi bi-pencil"></i> ویرایش
+                            </a>
+                            <button class="btn btn-danger btn-sm" onclick="deletePost()">
+                                <i class="bi bi-trash"></i> حذف
+                            </button>
                         </div>
                     </div>
-                </div>
+                </article>
 
                 <!-- Comments Section -->
-                <div class="comments-section">
+                <section class="mt-5">
                     <h4 class="mb-4">
-                        <i class="bi bi-chat-text me-2"></i>
-                        نظرات (<span th:text="${post.comments?.size()}">0</span>)
+                        <i class="bi bi-chat-text"></i>
+                        نظرات (<span id="comments-count">0</span>)
                     </h4>
 
-                    <!-- Comments List -->
-                    <div th:if="${#lists.isEmpty(post.comments)}" class="text-center py-4">
-                        <i class="bi bi-chat display-4 text-muted"></i>
-                        <p class="text-muted mt-3">هنوز نظری ثبت نشده است.</p>
+                    <!-- Login Prompt برای کاربران لاگین نکرده -->
+                    <div id="login-prompt" class="login-prompt d-none">
+                        <i class="bi bi-chat-dots" style="font-size: 2rem;"></i>
+                        <h5 class="mt-2">برای ثبت نظر نیاز به ورود دارید</h5>
+                        <p class="text-muted">لطفاً وارد حساب کاربری خود شوید تا بتوانید نظر خود را ثبت کنید</p>
+                        <a id="login-link" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> ورود به حساب
+                        </a>
                     </div>
 
-                    <div th:each="comment : ${post.comments}" th:if="${comment.approved}" class="comment-card">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h6 class="fw-bold mb-0" th:text="${comment.authorName}">نام نظر دهنده</h6>
-                            <small class="text-muted" th:text="${#temporals.format(comment.createdAt, 'dd MMMM yyyy')}">تاریخ</small>
+                    <!-- Comment Form برای کاربران لاگین کرده -->
+                    <div id="comment-form-container" class="card mb-4 d-none">
+                        <div class="card-body">
+                            <h5 class="card-title">ثبت نظر جدید</h5>
+                            <form id="comment-form">
+                                <div class="mb-3">
+                                    <label for="comment-content" class="form-label">نظر شما</label>
+                                    <textarea
+                                            id="comment-content"
+                                            class="form-control"
+                                            rows="4"
+                                            placeholder="نظر خود را درباره این مطلب بنویسید..."
+                                            required
+                                    ></textarea>
+                                    <div class="form-text">نظر شما پس از تأیید مدیر نمایش داده خواهد شد</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-send"></i> ارسال نظر
+                                </button>
+                            </form>
                         </div>
-                        <p class="mb-0" th:text="${comment.content}">متن نظر...</p>
                     </div>
 
-                    <!-- Comment Form -->
-                    <div class="comment-form">
-                        <h5 class="mb-3">ثبت نظر جدید</h5>
-                        <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <input type="text" class="form-control" name="authorName"
-                                           placeholder="نام شما" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <input type="email" class="form-control" name="authorEmail"
-                                           placeholder="ایمیل شما" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                    <textarea class="form-control" name="content" rows="5"
-                                              placeholder="نظر شما..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send me-2"></i>ارسال نظر
-                            </button>
-                        </form>
+                    <!-- Comments List -->
+                    <div id="comments-container"></div>
+
+                    <!-- Comments Loading -->
+                    <div id="comments-loading" class="loading d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">در حال بارگذاری نظرات...</span>
+                        </div>
                     </div>
-                </div>
-            </article>
+
+                    <!-- No Comments Message -->
+                    <div id="no-comments" class="text-center py-5 d-none">
+                        <i class="bi bi-chat" style="font-size: 3rem; color: #6c757d;"></i>
+                        <h5 class="mt-3 text-muted">هنوز نظری ثبت نشده است</h5>
+                        <p class="text-muted">اولین نفری باشید که نظر می‌دهد</p>
+                    </div>
+                </section>
+            </div>
         </div>
 
         <!-- Sidebar -->
@@ -377,47 +203,313 @@
     </div>
 </div>
 
-<!-- Include Footer -->
+<!-- Footer -->
 <div th:replace="fragments/footer :: footer"></div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Vazirmatn Persian Font -->
-<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-
-<!-- Optional: Add some interactive features -->
 <script>
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
+    // متغیرهای global
+    let currentPostId = null;
+    let currentPost = null;
+    let currentUser = null;
+
+    // بارگذاری اولیه
+    document.addEventListener('DOMContentLoaded', function() {
+        // گرفتن ID پست از URL
+        const pathParts = window.location.pathname.split('/');
+        currentPostId = pathParts[pathParts.length - 1];
+
+        if (currentPostId) {
+            checkUserAuthentication();
+            loadPost();
+        } else {
+            showError('پست مورد نظر یافت نشد.');
+        }
+    });
+
+    // بررسی وضعیت احراز هویت کاربر
+    async function checkUserAuthentication() {
+        try {
+            const response = await fetch('/api/auth/current-user', {
+                credentials: 'include'
             });
-        });
-    });
 
-    // Share functionality
-    document.querySelectorAll('.share-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const url = window.location.href;
-            const title = document.title;
-
-            if (this.querySelector('.bi-facebook')) {
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-            } else if (this.querySelector('.bi-twitter')) {
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank');
-            } else if (this.querySelector('.bi-linkedin')) {
-                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
-            } else if (this.querySelector('.bi-whatsapp')) {
-                window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`, '_blank');
-            } else if (this.querySelector('.bi-telegram')) {
-                window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
+            if (response.ok) {
+                currentUser = await response.json();
+                setupCommentForm();
+            } else {
+                showLoginPrompt();
             }
+        } catch (error) {
+            console.log('User is not authenticated');
+            showLoginPrompt();
+        }
+    }
+
+    // نمایش پیام لاگین
+    function showLoginPrompt() {
+        document.getElementById('login-prompt').classList.remove('d-none');
+        document.getElementById('comment-form-container').classList.add('d-none');
+
+        // تنظیم لینک لاگین با redirect به همین صفحه
+        const loginLink = document.getElementById('login-link');
+        loginLink.href = `/login?redirect=${encodeURIComponent(window.location.href)}&comment_required=true`;
+    }
+
+    // تنظیم فرم کامنت برای کاربران لاگین کرده
+    function setupCommentForm() {
+        document.getElementById('login-prompt').classList.add('d-none');
+        document.getElementById('comment-form-container').classList.remove('d-none');
+
+        // تنظیم event listener برای فرم
+        document.getElementById('comment-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await submitComment();
         });
-    });
+    }
+
+    // بارگذاری پست
+    async function loadPost() {
+        try {
+            showLoading();
+            hideError();
+
+            const response = await fetch(`/api/posts/${currentPostId}`, {
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('پست یافت نشد');
+            }
+
+            const post = await response.json();
+            currentPost = post;
+
+            displayPost(post);
+            hideLoading();
+            loadComments();
+
+        } catch (error) {
+            console.error('Error loading post:', error);
+            hideLoading();
+            showError('خطا در بارگذاری پست: ' + error.message);
+        }
+    }
+
+    // نمایش پست
+    function displayPost(post) {
+        document.getElementById('post-title').textContent = post.title;
+        document.getElementById('post-date').textContent = new Date(post.createdAt).toLocaleDateString('fa-IR');
+        document.getElementById('post-author').textContent = post.author?.fullName || 'ناشناس';
+        document.getElementById('post-views').textContent = post.views || 0;
+        document.getElementById('post-content').innerHTML = post.content || 'محتوایی موجود نیست';
+        document.getElementById('like-count').textContent = post.likes || 0;
+
+        // نمایش دسته‌بندی‌ها
+        const categoriesContainer = document.getElementById('post-categories');
+        if (post.categories && post.categories.length > 0) {
+            categoriesContainer.innerHTML = post.categories.map(category =>
+                `<span class="badge bg-secondary category-badge">${category.name}</span>`
+            ).join(' ');
+        }
+
+        document.getElementById('post-container').classList.remove('d-none');
+    }
+
+    // بارگذاری نظرات
+    async function loadComments() {
+        try {
+            document.getElementById('comments-loading').classList.remove('d-none');
+            hideNoComments();
+
+            const response = await fetch(`/api/comments/post/${currentPostId}`, {
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const comments = await response.json();
+                displayComments(comments);
+                updateCommentsCount(comments.length);
+
+                if (comments.length === 0) {
+                    showNoComments();
+                }
+            }
+
+            document.getElementById('comments-loading').classList.add('d-none');
+
+        } catch (error) {
+            console.error('Error loading comments:', error);
+            document.getElementById('comments-loading').classList.add('d-none');
+            showNoComments();
+        }
+    }
+
+    // نمایش نظرات
+    function displayComments(comments) {
+        const commentsContainer = document.getElementById('comments-container');
+
+        let commentsHTML = '';
+
+        comments.forEach(comment => {
+            const commentDate = new Date(comment.createdAt).toLocaleDateString('fa-IR');
+            const isOwner = currentUser && currentUser.email === comment.authorEmail;
+
+            commentsHTML += `
+                    <div class="comment-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">${comment.authorName}</h6>
+                                <small class="text-muted">${commentDate}</small>
+                            </div>
+                            ${isOwner ? `
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteComment(${comment.id})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                        <p class="mb-0">${comment.content}</p>
+
+                        ${!comment.approved ? `
+                            <div class="comment-actions">
+                                <span class="badge pending-badge">
+                                    <i class="bi bi-clock"></i> در انتظار تأیید
+                                </span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+        });
+
+        commentsContainer.innerHTML = commentsHTML;
+    }
+
+    // ارسال نظر جدید
+    async function submitComment() {
+        const content = document.getElementById('comment-content').value.trim();
+
+        if (!content) {
+            alert('لطفاً متن نظر را وارد کنید.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/comments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    content: content,
+                    postId: currentPostId
+                })
+            });
+
+            if (response.ok) {
+                document.getElementById('comment-content').value = '';
+                alert('نظر شما با موفقیت ثبت شد و پس از تأیید مدیر نمایش داده خواهد شد.');
+                loadComments(); // بارگذاری مجدد نظرات
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                alert('خطا در ثبت نظر: ' + (errorData.message || 'لطفاً دوباره تلاش کنید'));
+            }
+
+        } catch (error) {
+            console.error('Error submitting comment:', error);
+            alert('خطا در ارسال نظر.');
+        }
+    }
+
+    // حذف نظر
+    async function deleteComment(commentId) {
+        if (!confirm('آیا از حذف این نظر اطمینان دارید؟')) return;
+
+        try {
+            const response = await fetch(`/api/comments/${commentId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                alert('نظر با موفقیت حذف شد.');
+                loadComments(); // بارگذاری مجدد نظرات
+            } else {
+                alert('خطا در حذف نظر.');
+            }
+
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+            alert('خطا در حذف نظر.');
+        }
+    }
+
+    // لایک کردن پست
+    async function likePost() {
+        try {
+            const response = await fetch(`/api/posts/${currentPostId}/like`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('like-count').textContent = result.likes;
+            }
+
+        } catch (error) {
+            console.error('Error liking post:', error);
+        }
+    }
+
+    // اشتراک‌گذاری پست
+    function sharePost() {
+        if (navigator.share) {
+            navigator.share({
+                title: document.getElementById('post-title').textContent,
+                text: document.getElementById('post-title').textContent,
+                url: window.location.href
+            })
+                .catch(error => console.log('Error sharing:', error));
+        } else {
+            // Fallback برای مرورگرهایی که از Web Share API پشتیبانی نمی‌کنند
+            alert('امکان اشتراک‌گذاری در این مرورگر وجود ندارد. لینک را کپی کنید: ' + window.location.href);
+        }
+    }
+
+    // به‌روزرسانی تعداد نظرات
+    function updateCommentsCount(count) {
+        document.getElementById('comments-count').textContent = count;
+        document.getElementById('post-comments-count').textContent = count;
+    }
+
+    // توابع نمایش/پنهان کردن عناصر
+    function showLoading() {
+        document.getElementById('loading').classList.remove('d-none');
+    }
+
+    function hideLoading() {
+        document.getElementById('loading').classList.add('d-none');
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.querySelector('p').textContent = message;
+        errorDiv.classList.remove('d-none');
+    }
+
+    function hideError() {
+        document.getElementById('error-message').classList.add('d-none');
+    }
+
+    function showNoComments() {
+        document.getElementById('no-comments').classList.remove('d-none');
+    }
+
+    function hideNoComments() {
+        document.getElementById('no-comments').classList.add('d-none');
+    }
 </script>
 </body>
 </html>

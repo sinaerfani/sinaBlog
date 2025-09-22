@@ -1,80 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>وبلاگ سینا</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-</head>
-<body>
-<!-- Header Fragment -->
-<header th:fragment="header">
+<div th:fragment="header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <!-- Brand/Logo -->
-            <a class="navbar-brand fw-bold" th:href="@{/}">
-                <i class="bi bi-journal-text me-2"></i>وبلاگ سینا
-            </a>
-
-            <!-- Mobile Toggle Button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <a class="navbar-brand" href="/">سینا بلاگ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <!-- Navbar Content -->
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <!-- Navigation Links -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/}">خانه</a>
+                        <a class="nav-link active" href="/">خانه</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/posts}">مقالات</a>
+                        <a class="nav-link" href="#">درباره ما</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/about}">درباره ما</a>
+                        <a class="nav-link" href="#">تماس با ما</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/contact}">تماس</a>
+                    <li class="nav-item" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                        <a class="nav-link" href="/admin">مدیریت</a>
                     </li>
                 </ul>
-
-                <!-- Search Form -->
-                <form class="d-flex me-2 mb-2 mb-lg-0" th:action="@{/search}" method="get">
-                    <div class="input-group">
-                        <input type="search" name="q" class="form-control" placeholder="جستجو..." aria-label="Search">
-                        <button class="btn btn-light" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Auth Links -->
                 <div class="d-flex">
-                    <div th:if="${#authentication.principal == 'anonymousUser'}">
-                        <a th:href="@{/auth/login}" class="btn btn-outline-light me-2">
-                            <i class="bi bi-box-arrow-in-right"></i> ورود
+                    <div th:if="${#authentication.isAuthenticated()}">
+                        <a href="/profile" class="btn btn-outline-light me-2">
+                            <i class="bi bi-person-circle"></i> پروفایل
                         </a>
-                        <a th:href="@{/auth/register}" class="btn btn-light">
-                            <i class="bi bi-person-plus"></i> ثبت‌نام
+                        <a href="/api/auth/logout" class="btn btn-outline-light">
+                            <i class="bi bi-box-arrow-left"></i> خروج
                         </a>
                     </div>
-                    <div th:if="${#authentication.principal != 'anonymousUser'}">
-                        <a th:href="@{/admin}" class="btn btn-warning me-2" sec:authorize="hasRole('ADMIN')">
-                            <i class="bi bi-speedometer2"></i> پنل مدیریت
+                    <div th:unless="${#authentication.isAuthenticated()}">
+                        <a href="/login" class="btn btn-outline-light me-2">
+                            <i class="bi bi-box-arrow-in-left"></i> ورود
                         </a>
-                        <a th:href="@{/auth/logout}" class="btn btn-outline-light">
-                            <i class="bi bi-box-arrow-right"></i> خروج
+                        <a href="/register" class="btn btn-light">
+                            <i class="bi bi-person-plus"></i> ثبت‌نام
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
-</header>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</div>
 </html>

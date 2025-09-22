@@ -1,138 +1,164 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="fa" dir="rtl">
+<html lang="fa" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود به حساب کاربری</title>
+    <title>ورود - سینا بلاگ</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         body {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            font-family: 'Vazir', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            direction: rtl;
+            text-align: right;
         }
-        .auth-card {
+        .login-container {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            width: 100%;
+            max-width: 400px;
         }
-        .auth-header {
-            background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+        .login-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 30px;
+            padding: 2rem;
             text-align: center;
         }
-        .auth-body {
-            padding: 30px;
+        .login-body {
+            padding: 2rem;
+        }
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
         }
         .form-control:focus {
-            border-color: #1976d2;
-            box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
+            border-color: #4facfe;
+            box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+        .btn-login {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             border: none;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
         }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #1565c0 0%, #0b3d91 100%);
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
         }
-        .divider {
-            display: flex;
-            align-items: center;
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .comment-login-prompt {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             text-align: center;
-            color: #666;
-            margin: 20px 0;
-        }
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #ddd;
-        }
-        .divider::before {
-            margin-right: 10px;
-        }
-        .divider::after {
-            margin-left: 10px;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="auth-card">
+        <div class="col-md-6 col-lg-4">
+            <div class="login-container">
                 <!-- Header -->
-                <div class="auth-header">
-                    <i class="bi bi-person-circle display-4 mb-3"></i>
-                    <h3 class="fw-bold">ورود به حساب کاربری</h3>
-                    <p class="mb-0">خوش آمدید! لطفا اطلاعات خود را وارد کنید</p>
+                <div class="login-header">
+                    <h3><i class="bi bi-person-circle"></i> ورود به حساب</h3>
+                    <p class="mb-0">به سینا بلاگ خوش آمدید</p>
                 </div>
 
                 <!-- Body -->
-                <div class="auth-body">
-                    <!-- Error Message -->
-                    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        نام کاربری یا رمز عبور اشتباه است
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="login-body">
+                    <!-- Comment Login Prompt -->
+                    <div id="comment-login-prompt" class="comment-login-prompt d-none">
+                        <i class="bi bi-chat-dots" style="font-size: 2rem; color: #fd7e14;"></i>
+                        <h5 class="mt-2">برای ثبت نظر نیاز به ورود دارید</h5>
+                        <p class="text-muted mb-2">لطفاً وارد حساب کاربری خود شوید</p>
                     </div>
 
-                    <!-- Logout Message -->
-                    <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        شما با موفقیت خارج شدید
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <!-- Error Message -->
+                    <div id="error-message" class="alert alert-danger d-none" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span id="error-text"></span>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div id="success-message" class="alert alert-success d-none" role="alert">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span id="success-text"></span>
                     </div>
 
                     <!-- Login Form -->
-                    <form th:action="@{/auth/login}" method="post">
+                    <form id="login-form">
                         <div class="mb-3">
-                            <label for="username" class="form-label">
-                                <i class="bi bi-person me-1 text-primary"></i>نام کاربری
-                            </label>
-                            <input type="text" class="form-control form-control-lg"
-                                   id="username" name="username" placeholder="نام کاربری خود را وارد کنید"
-                                   required th:value="${#authentication?.name}">
+                            <label for="username" class="form-label">نام کاربری</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" id="username"
+                                       placeholder="نام کاربری خود را وارد کنید" required>
+                            </div>
+                            <div class="form-text text-danger d-none" id="username-error"></div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label">
-                                <i class="bi bi-lock me-1 text-primary"></i>رمز عبور
-                            </label>
-                            <input type="password" class="form-control form-control-lg"
-                                   id="password" name="password" placeholder="رمز عبور خود را وارد کنید"
-                                   required>
+                            <label for="password" class="form-label">رمز عبور</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control" id="password"
+                                       placeholder="رمز عبور خود را وارد کنید" required>
+                                <button type="button" class="btn btn-outline-secondary"
+                                        onclick="togglePasswordVisibility()">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text text-danger d-none" id="password-error"></div>
                         </div>
 
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember" name="remember-me">
-                            <label class="form-check-label" for="remember">مرا به خاطر بسپار</label>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-login" id="login-btn">
+                                <span id="login-text">ورود به حساب</span>
+                                <span id="login-loading" class="loading d-none"></span>
+                            </button>
                         </div>
-
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>ورود به حساب
-                        </button>
                     </form>
 
-                    <div class="divider">یا</div>
-
-                    <div class="text-center">
-                        <p class="mb-3">حساب کاربری ندارید؟</p>
-                        <a th:href="@{/auth/register}" class="btn btn-outline-primary btn-lg w-100">
-                            <i class="bi bi-person-plus me-2"></i>ایجاد حساب جدید
-                        </a>
+                    <!-- Links -->
+                    <div class="text-center mt-3">
+                        <a href="/forgot-password" class="text-decoration-none">رمز عبور خود را فراموش کرده‌اید؟</a>
+                        <span class="mx-2">•</span>
+                        <a href="/register" class="text-decoration-none">حساب کاربری ندارید؟</a>
                     </div>
 
-                    <div class="text-center mt-4">
-                        <a th:href="@{/}" class="text-decoration-none text-muted">
-                            <i class="bi bi-arrow-right me-1"></i>بازگشت به صفحه اصلی
+                    <!-- Continue as Guest -->
+                    <div class="text-center mt-3">
+                        <a href="/" class="text-decoration-none">
+                            <i class="bi bi-arrow-left"></i> ادامه به عنوان مهمان
                         </a>
                     </div>
                 </div>
@@ -141,7 +167,249 @@
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // متغیرهای global
+    let isSubmitting = false;
+    let redirectAfterLogin = '/';
+
+    // بارگذاری اولیه
+    document.addEventListener('DOMContentLoaded', function() {
+        // بررسی اگر کاربر قبلاً وارد شده است
+        checkAuthenticationStatus();
+
+        // بررسی پیام‌های URL و redirect
+        checkUrlParameters();
+
+        // تنظیم event listener برای فرم
+        setupFormValidation();
+    });
+
+    // بررسی وضعیت احراز هویت
+    async function checkAuthenticationStatus() {
+        try {
+            const response = await fetch('/api/auth/current-user', {
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                // کاربر قبلاً وارد شده است، redirect به صفحه اصلی
+                window.location.href = redirectAfterLogin;
+            }
+        } catch (error) {
+            console.log('User is not authenticated');
+        }
+    }
+
+    // بررسی پارامترهای URL
+    function checkUrlParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // بررسی redirect بعد از login
+        if (urlParams.has('redirect')) {
+            redirectAfterLogin = decodeURIComponent(urlParams.get('redirect'));
+        }
+
+        // نمایش پیام نیاز به login برای comment
+        if (urlParams.has('comment_required')) {
+            document.getElementById('comment-login-prompt').classList.remove('d-none');
+        }
+
+        // نمایش پیام‌های خطا
+        if (urlParams.has('error')) {
+            showError(decodeURIComponent(urlParams.get('error')));
+        }
+
+        // نمایش پیام‌های موفقیت
+        if (urlParams.has('message')) {
+            showSuccess(decodeURIComponent(urlParams.get('message')));
+        }
+
+        // نمایش پیام ثبت‌نام موفق
+        if (urlParams.has('registered')) {
+            showSuccess('حساب کاربری شما با موفقیت ایجاد شد. لطفاً وارد شوید.');
+        }
+
+        // نمایش پیام logout
+        if (urlParams.has('logout')) {
+            showSuccess('شما با موفقیت خارج شدید.');
+        }
+    }
+
+    // تنظیم validation فرم
+    function setupFormValidation() {
+        const form = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        // Validation real-time
+        usernameInput.addEventListener('input', function() {
+            validateUsername();
+        });
+
+        passwordInput.addEventListener('input', function() {
+            validatePassword();
+        });
+
+        // Submit form
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (validateForm() && !isSubmitting) {
+                await submitLoginForm();
+            }
+        });
+    }
+
+    // validate نام کاربری
+    function validateUsername() {
+        const username = document.getElementById('username').value.trim();
+        const errorElement = document.getElementById('username-error');
+
+        if (!username) {
+            showFieldError(errorElement, 'نام کاربری الزامی است');
+            return false;
+        }
+
+        if (username.length < 3) {
+            showFieldError(errorElement, 'نام کاربری باید حداقل 3 کاراکتر باشد');
+            return false;
+        }
+
+        hideFieldError(errorElement);
+        return true;
+    }
+
+    // validate رمز عبور
+    function validatePassword() {
+        const password = document.getElementById('password').value;
+        const errorElement = document.getElementById('password-error');
+
+        if (!password) {
+            showFieldError(errorElement, 'رمز عبور الزامی است');
+            return false;
+        }
+
+        if (password.length < 6) {
+            showFieldError(errorElement, 'رمز عبور باید حداقل 6 کاراکتر باشد');
+            return false;
+        }
+
+        hideFieldError(errorElement);
+        return true;
+    }
+
+    // validate کل فرم
+    function validateForm() {
+        const isUsernameValid = validateUsername();
+        const isPasswordValid = validatePassword();
+
+        return isUsernameValid && isPasswordValid;
+    }
+
+    // ارسال فرم login
+    async function submitLoginForm() {
+        try {
+            isSubmitting = true;
+            showLoading();
+            hideError();
+            hideSuccess();
+
+            const formData = {
+                username: document.getElementById('username').value.trim(),
+                password: document.getElementById('password').value
+            };
+
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                showSuccess('ورود موفقیت‌آمیز بود! در حال انتقال...');
+
+                // redirect بعد از 1 ثانیه
+                setTimeout(() => {
+                    window.location.href = redirectAfterLogin;
+                }, 1000);
+
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'نام کاربری یا رمز عبور اشتباه است');
+            }
+
+        } catch (error) {
+            console.error('Login error:', error);
+            showError(error.message || 'خطا در ارتباط با سرور');
+        } finally {
+            isSubmitting = false;
+            hideLoading();
+        }
+    }
+
+    // toggle visibility رمز عبور
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.querySelector('#password + .btn i');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('bi-eye');
+            eyeIcon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('bi-eye-slash');
+            eyeIcon.classList.add('bi-eye');
+        }
+    }
+
+    // توابع نمایش/پنهان کردن
+    function showLoading() {
+        document.getElementById('login-text').classList.add('d-none');
+        document.getElementById('login-loading').classList.remove('d-none');
+        document.getElementById('login-btn').disabled = true;
+    }
+
+    function hideLoading() {
+        document.getElementById('login-text').classList.remove('d-none');
+        document.getElementById('login-loading').classList.add('d-none');
+        document.getElementById('login-btn').disabled = false;
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById('error-message');
+        document.getElementById('error-text').textContent = message;
+        errorDiv.classList.remove('d-none');
+    }
+
+    function hideError() {
+        document.getElementById('error-message').classList.add('d-none');
+    }
+
+    function showSuccess(message) {
+        const successDiv = document.getElementById('success-message');
+        document.getElementById('success-text').textContent = message;
+        successDiv.classList.remove('d-none');
+    }
+
+    function hideSuccess() {
+        document.getElementById('success-message').classList.add('d-none');
+    }
+
+    function showFieldError(element, message) {
+        element.textContent = message;
+        element.classList.remove('d-none');
+    }
+
+    function hideFieldError(element) {
+        element.textContent = '';
+        element.classList.add('d-none');
+    }
+</script>
 </body>
 </html>

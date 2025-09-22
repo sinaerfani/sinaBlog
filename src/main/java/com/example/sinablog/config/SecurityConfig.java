@@ -68,7 +68,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/login",           // صفحه لاگین
                                 "/",                // صفحه اصلی
-                                "/register",        // صفحه ثبت‌نام
+//                                "/register",        // صفحه ثبت‌نام
                                 "/error",           // صفحه خطا
                                 "/403",             // صفحه دسترسی ممنوع
                                 "/api/auth/login",  // endpoint لاگین
@@ -149,10 +149,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         // دامنه‌های مجاز برای frontend
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",    // توسعه React
-                "http://localhost:4200",    // توسعه Angular
-                "http://localhost:8080",    // توسعه Vue
-                "http://localhost:5173"     // توسعه Vite
+                "http://localhost:8083",    // توسعه React
+                "http://localhost:8080"   // توسعه Vue
         ));
         // متدهای HTTP مجاز
         configuration.setAllowedMethods(Arrays.asList(
