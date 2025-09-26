@@ -27,7 +27,7 @@ public class PostDto {
 
     private PostStatus status;
 
-    @NotNull(message = "Author is required")
+
     private Long authorId;
 
     private Long categoryId;

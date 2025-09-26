@@ -1,6 +1,7 @@
 package com.example.sinablog.cotroller;
 
 
+import com.example.sinablog.Service.User.UserService;
 import com.example.sinablog.Service.comment.CommentService;
 import com.example.sinablog.customeExeption.RuleException;
 import com.example.sinablog.dtos.comment.CommentMapper;
@@ -18,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +30,12 @@ public class CommentController {
 
     private final CommentService commentService;
     private final CommentMapper commentMapper;
+    private final UserService userService;
 
-    public CommentController(CommentService commentService, CommentMapper commentMapper) {
+    public CommentController(CommentService commentService, CommentMapper commentMapper, UserService userService) {
         this.commentService = commentService;
         this.commentMapper = commentMapper;
+        this.userService = userService;
     }
 
     // ==================== عملیات CRUD ====================
@@ -43,12 +47,19 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CommentResponseDTO> createComment(
             @Valid @RequestBody CommentRequestDTO commentRequestDTO,
-            @AuthenticationPrincipal User currentUser) {
+            Principal principal) {
 
         try {
-            Comment comment = commentMapper.toEntity(commentRequestDTO);
+            // بررسی وجود principal
+            if (principal == null) {
+                throw new RuleException("User not authenticated");
+            }
 
-            // تنظیم اطلاعات کاربر authenticated
+            // یافتن کاربر بر اساس نام کاربری
+            User currentUser = userService.getUserByUsername(principal.getName())
+                    .orElseThrow(() -> new RuleException("User not found"));
+
+            Comment comment = commentMapper.toEntity(commentRequestDTO);
             comment.setAuthorName(currentUser.getFullName());
             comment.setAuthorEmail(currentUser.getEmail());
 

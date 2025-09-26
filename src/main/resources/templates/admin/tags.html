@@ -1,10 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>مدیریت تگ‌ها</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<div class="container mt-5">
+    <div th:replace="fragments/header :: header"></div>
+
+    <h2 class="mb-4">مدیریت تگ‌ها</h2>
+
+    <!-- فرم افزودن تگ جدید -->
+    <form id="tagForm" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" id="tagName" class="form-control" placeholder="نام تگ">
+        </div>
+        <div class="col-md-4">
+            <input type="text" id="tagSlug" class="form-control" placeholder="اسلاگ تگ">
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-success">افزودن تگ</button>
+        </div>
+    </form>
+
+    <!-- جدول لیست تگ‌ها -->
+    <table class="table table-bordered">
+        <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>نام</th>
+            <th>اسلاگ</th>
+            <th>عملیات</th>
+        </tr>
+        </thead>
+        <tbody id="tagsTableBody">
+        <!-- تگ‌ها با جاوااسکریپت بارگذاری می‌شوند -->
+        </tbody>
+    </table>
+</div>
+
+<!-- جاوااسکریپت داخل خود فایل -->
+<script>
+    document.addEventListener("DOMContentLoaded", loadTags);
+
+    // بارگذاری لیست تگ‌ها
+    function loadTags() {
+        fetch("/api/tags", { credentials: 'include' })
+            .then(resp => resp.json())
+            .then(tags => {
+                const tbody = document.getElementById("tagsTableBody");
+                tbody.innerHTML = "";
+                tags.forEach(tag => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${tag.id}</td>
+                            <td>${tag.name}</td>
+                            <td>${tag.slug}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editTag(${tag.id}, '${tag.name}', '${tag.slug}')">ویرایش</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteTag(${tag.id})">حذف</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            })
+            .catch(err => console.error("خطا در بارگذاری تگ‌ها:", err));
+    }
+
+    // افزودن تگ جدید
+    document.getElementById("tagForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const name = document.getElementById("tagName").value.trim();
+        const slug = document.getElementById("tagSlug").value.trim();
+
+        if (!name || !slug) {
+            alert("نام و اسلاگ الزامی است");
+            return;
+        }
+
+        fetch("/api/tags", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify({ name, slug })
+        })
+            .then(resp => {
+                if (resp.ok) {
+                    alert("تگ با موفقیت اضافه شد");
+                    document.getElementById("tagForm").reset();
+                    loadTags();
+                } else {
+                    alert("خطا در افزودن تگ");
+                }
+            })
+            .catch(err => console.error("Error adding tag:", err));
+    });
+
+    // ویرایش تگ
+    function editTag(id, oldName, oldSlug) {
+        const name = prompt("نام جدید تگ:", oldName);
+        const slug = prompt("اسلاگ جدید تگ:", oldSlug);
+
+        if (!name || !slug) {
+            alert("نام و اسلاگ الزامی است");
+            return;
+        }
+
+        fetch(`/api/tags/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify({ name, slug })
+        })
+            .then(resp => {
+                if (resp.ok) {
+                    alert("تگ با موفقیت ویرایش شد");
+                    loadTags();
+                } else {
+                    alert("خطا در ویرایش تگ");
+                }
+            })
+            .catch(err => console.error("Error editing tag:", err));
+    }
+
+    // حذف تگ
+    function deleteTag(id) {
+        if (!confirm("آیا مطمئن هستید که می‌خواهید این تگ را حذف کنید؟")) return;
+
+        fetch(`/api/tags/${id}`, {
+            method: "DELETE",
+            credentials: 'include'
+        })
+            .then(resp => {
+                if (resp.ok) {
+                    alert("تگ با موفقیت حذف شد");
+                    loadTags();
+                } else {
+                    alert("خطا در حذف تگ");
+                }
+            })
+            .catch(err => console.error("Error deleting tag:", err));
+    }
+</script>
 
 </body>
 </html>

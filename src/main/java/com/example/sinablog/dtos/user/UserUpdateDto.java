@@ -13,10 +13,19 @@ public class UserUpdateDto {
 
     @Size(max = 100, message = "Full name must be less than 100 characters")
     private String fullName;
-
+    private String role;
     private Boolean enabled;
 
     // Getters and Setters
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public String getUsername() {
         return username;
     }

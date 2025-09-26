@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایش پست - سینا بلاگ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Vazir', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            background-color: #343a40;
+            color: white;
+            min-height: 100vh;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+        .sidebar a:hover {
+            color: white;
+            background-color: #495057;
+        }
+        .header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,.05);
+        }
+        .form-label {
+            font-weight: 600;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .invalid-feedback {
+            display: block;
+        }
+        .tag-item {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tag-item:hover {
+            transform: scale(1.05);
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<script src="/js/app.js"></script>
+
+<!-- Header -->
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+
+
+        <!-- محتوای اصلی -->
+        <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 text-gray-800">ویرایش پست</h1>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary me-2" id="previewBtn">
+                        <i class="fas fa-eye"></i> پیش‌نمایش
+                    </button>
+                    <a href="/admin/posts" class="btn btn-secondary">
+                        <i class="fas fa-arrow-right"></i> بازگشت به مدیریت پست‌ها
+                    </a>
+                </div>
+            </div>
+
+            <div id="loadingIndicator" class="text-center py-5">
+                <div class="loading mx-auto mb-2"></div>
+                <p>در حال بارگذاری اطلاعات پست...</p>
+            </div>
+
+            <div class="card shadow mb-4 d-none" id="postFormContainer">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">فرم ویرایش پست</h6>
+                    <span class="badge bg-secondary" id="postIdBadge">ID: </span>
+                </div>
+                <div class="card-body">
+                    <form id="postForm">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">عنوان پست <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="عنوان پست را وارد کنید" required>
+                            <div class="invalid-feedback" id="titleError"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="slug" class="form-label">Slug</label>
+                            <input type="text" class="form-control" id="slug" name="slug" placeholder="slug پست">
+                            <small class="form-text text-muted">تغییر slug ممکن است بر روی لینک‌های قدیمی تأثیر بگذارد</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="content" class="form-label">محتوا <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="content" name="content" rows="12" placeholder="محتوی پست را اینجا بنویسید" required></textarea>
+                            <div class="invalid-feedback" id="contentError"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="excerpt" class="form-label">گزیده محتوا</label>
+                            <textarea class="form-control" id="excerpt" name="excerpt" rows="3" placeholder="خلاصه کوتاهی از پست"></textarea>
+                            <small class="form-text text-muted">این متن در لیست پست‌ها نمایش داده می‌شود</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">وضعیت</label>
+                                    <select class="form-select" id="status" name="status">
+                                        <option value="DRAFT">پیش‌نویس</option>
+                                        <option value="PUBLISHED">منتشر شده</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">دسته‌بندی</label>
+                                    <select class="form-select" id="category" name="categoryId">
+                                        <option value="">انتخاب دسته‌بندی</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">تگ‌ها</label>
+                            <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                                <div id="tagsContainer">
+                                    <!-- تگ‌ها به صورت داینامیک لود می‌شوند -->
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">برای انتخاب تگ‌ها، روی آنها کلیک کنید</small>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar"></i> ایجاد شده در: <span id="createdAt"></span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-edit"></i> آخرین ویرایش: <span id="updatedAt"></span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-danger me-md-2" id="deleteBtn">
+                                <i class="fas fa-trash"></i> حذف پست
+                            </button>
+                            <button type="button" class="btn btn-outline-warning me-md-2" id="unpublishBtn" style="display: none;">
+                                <i class="fas fa-eye-slash"></i> عدم انتشار
+                            </button>
+                            <button type="button" class="btn btn-outline-success me-md-2" id="publishBtn" style="display: none;">
+                                <i class="fas fa-check"></i> انتشار
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> ذخیره تغییرات
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="successMsg" class="alert alert-success mt-3 d-none">
+                        <i class="fas fa-check-circle"></i> تغییرات با موفقیت ذخیره شد!
+                    </div>
+                    <div id="errorMsg" class="alert alert-danger mt-3 d-none"></div>
+                </div>
+            </div>
+
+            <!-- مودال حذف پست -->
+            <div class="modal fade" id="deleteModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">تأیید حذف پست</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>آیا از حذف این پست اطمینان دارید؟ این عمل قابل بازگشت نیست.</p>
+                            <p class="text-danger"><strong>عنوان پست: <span id="deletePostTitle"></span></strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">لغو</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">حذف پست</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- فوتر -->
+<footer class="bg-dark text-white text-center py-3 mt-5">
+    <div class="container">
+        <p>کلیه حقوق برای سینا بلاگ محفوظ است © 2023</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // متغیرهای گلوبال
+    let categories = [];
+    let tags = [];
+    let selectedTags = [];
+    let currentPostId = null;
+    let currentPostData = null;
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        // استخراج ID پست از URL
+        currentPostId = extractPostIdFromURL();
+
+        if (!currentPostId) {
+            showError('شناسه پست معتبر نیست');
+            return;
+        }
+
+        // لود داده‌های مورد نیاز
+        await loadCategories();
+        await loadTags();
+        await loadPostData(currentPostId);
+
+        // تنظیم رویدادها
+        setupEventListeners();
+    });
+
+    // تابع برای استخراج ID پست از URL
+    function extractPostIdFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const idFromQuery = urlParams.get('id');
+        return parseInt(idFromQuery);
+    }
+
+    // تابع برای لود داده‌های پست
+    async function loadPostData(postId) {
+        try {
+            const response = await fetch(`/api/posts/${postId}`);
+            if (response.ok) {
+                currentPostData = await response.json();
+                displayPostData(currentPostData);
+                document.getElementById('loadingIndicator').classList.add('d-none');
+                document.getElementById('postFormContainer').classList.remove('d-none');
+            } else if (response.status === 404) {
+                throw new Error('پست مورد نظر یافت نشد');
+            } else {
+                throw new Error('خطا در دریافت اطلاعات پست');
+            }
+        } catch (error) {
+            console.error('Error loading post data:', error);
+            showError('خطا در بارگذاری اطلاعات پست: ' + error.message);
+        }
+    }
+
+    // تابع برای نمایش داده‌های پست در فرم
+    function displayPostData(post) {
+        // پر کردن فیلدهای فرم
+        document.getElementById('title').value = post.title || '';
+        document.getElementById('slug').value = post.slug || '';
+        document.getElementById('content').value = post.content || '';
+        document.getElementById('excerpt').value = post.excerpt || '';
+        document.getElementById('status').value = post.status || 'DRAFT';
+        document.getElementById('category').value = post.categoryId || '';
+
+        // نمایش اطلاعات پست
+        document.getElementById('postIdBadge').textContent = 'ID: ' + post.id;
+        document.getElementById('createdAt').textContent = formatDate(post.createdAt);
+        document.getElementById('updatedAt').textContent = formatDate(post.updatedAt);
+
+        // تنظیم تگ‌های انتخاب شده
+        if (post.tagIds && Array.isArray(post.tagIds)) {
+            selectedTags = post.tagIds;
+        }
+        renderTags();
+
+        // تنظیم دکمه‌های وضعیت انتشار
+        togglePublishButtons(post.status === 'PUBLISHED');
+    }
+
+    // تابع برای تغییر وضعیت دکمه‌های انتشار/عدم انتشار
+    function togglePublishButtons(isPublished) {
+        if (isPublished) {
+            document.getElementById('unpublishBtn').style.display = 'block';
+            document.getElementById('publishBtn').style.display = 'none';
+        } else {
+            document.getElementById('unpublishBtn').style.display = 'none';
+            document.getElementById('publishBtn').style.display = 'block';
+        }
+    }
+
+    // تابع برای فرمت تاریخ
+    function formatDate(dateString) {
+        if (!dateString) return 'نامشخص';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fa-IR');
+    }
+
+    // تابع برای لود دسته‌بندی‌ها
+    async function loadCategories() {
+        try {
+            const response = await fetch('/api/categories');
+            if (response.ok) {
+                categories = await response.json();
+                const categorySelect = document.getElementById('category');
+
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.name;
+                    categorySelect.appendChild(option);
+                });
+            } else {
+                throw new Error('خطا در دریافت دسته‌بندی‌ها');
+            }
+        } catch (error) {
+            console.error('Error loading categories:', error);
+            showError('خطا در بارگذاری دسته‌بندی‌ها: ' + error.message);
+        }
+    }
+
+    // تابع برای لود تگ‌ها
+    async function loadTags() {
+        try {
+            const response = await fetch('/api/tags');
+            if (response.ok) {
+                tags = await response.json();
+                renderTags();
+            } else {
+                throw new Error('خطا در دریافت تگ‌ها');
+            }
+        } catch (error) {
+            console.error('Error loading tags:', error);
+            showError('خطا در بارگذاری تگ‌ها: ' + error.message);
+        }
+    }
+
+    // تابع برای نمایش تگ‌ها
+    function renderTags() {
+        const tagsContainer = document.getElementById('tagsContainer');
+        tagsContainer.innerHTML = '';
+
+        if (tags.length === 0) {
+            tagsContainer.innerHTML = '<p class="text-muted text-center">هیچ تگی وجود ندارد</p>';
+            return;
+        }
+
+        tags.forEach(tag => {
+            const tagElement = document.createElement('span');
+            tagElement.className = `badge bg-${selectedTags.includes(tag.id) ? 'primary' : 'secondary'} me-2 mb-2 p-2 tag-item`;
+            tagElement.style.cursor = 'pointer';
+            tagElement.textContent = tag.name;
+            tagElement.dataset.id = tag.id;
+
+            tagElement.addEventListener('click', function() {
+                toggleTagSelection(tag.id);
+            });
+
+            tagsContainer.appendChild(tagElement);
+        });
+    }
+
+    // تابع برای انتخاب/عدم انتخاب تگ
+    function toggleTagSelection(tagId) {
+        const index = selectedTags.indexOf(tagId);
+        if (index === -1) {
+            selectedTags.push(tagId);
+        } else {
+            selectedTags.splice(index, 1);
+        }
+        renderTags();
+    }
+
+    // تابع برای تنظیم رویدادها
+    function setupEventListeners() {
+        // تولید خودکار slug از عنوان
+        document.getElementById('title').addEventListener('blur', function() {
+            const slugField = document.getElementById('slug');
+            if (!slugField.value) {
+                const slug = generateSlug(this.value);
+                slugField.value = slug;
+            }
+        });
+
+        // ارسال فرم
+        document.getElementById('postForm').addEventListener('submit', handleFormSubmit);
+
+        // دکمه انتشار
+        document.getElementById('publishBtn').addEventListener('click', function() {
+            updatePostStatus('PUBLISHED');
+        });
+
+        // دکمه عدم انتشار
+        document.getElementById('unpublishBtn').addEventListener('click', function() {
+            updatePostStatus('DRAFT');
+        });
+
+        // دکمه حذف
+        document.getElementById('deleteBtn').addEventListener('click', function() {
+            showDeleteModal();
+        });
+
+        // تأیید حذف
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            deletePost();
+        });
+
+        // دکمه پیش‌نمایش
+        document.getElementById('previewBtn').addEventListener('click', function() {
+            previewPost();
+        });
+    }
+
+    // تابع برای تولید slug از متن
+    function generateSlug(text) {
+        return text
+            .toLowerCase()
+            .replace(/[^\u0600-\u06FFa-z0-9 -]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim();
+    }
+
+    // تابع برای مدیریت ارسال فرم
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        clearMessages();
+
+        // اعتبارسنجی فیلدهای اجباری
+        if (!validateForm()) {
+            return;
+        }
+
+        // آماده‌سازی داده‌ها برای ارسال
+        const formData = {
+            title: document.getElementById('title').value.trim(),
+            slug: document.getElementById('slug').value.trim(),
+            content: document.getElementById('content').value.trim(),
+            excerpt: document.getElementById('excerpt').value.trim() || null,
+            status: document.getElementById('status').value,
+            categoryId: document.getElementById('category').value ? parseInt(document.getElementById('category').value) : null,
+            tagIds: selectedTags.length > 0 ? selectedTags : null
+        };
+
+        try {
+            // ارسال درخواست به API برای به‌روزرسانی
+            const response = await fetch(`/api/posts/${currentPostId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                // موفقیت‌آمیز
+                showSuccess();
+
+                // به‌روزرسانی اطلاعات محلی
+                currentPostData = { ...currentPostData, ...formData };
+                document.getElementById('updatedAt').textContent = formatDate(new Date().toISOString());
+
+                // به‌روزرسانی دکمه‌های وضعیت
+                togglePublishButtons(formData.status === 'PUBLISHED');
+
+                setTimeout(() => {
+                    window.location.href = '/admin/posts';
+                }, 1500);
+            } else {
+                // خطا از سمت سرور
+                const errorData = await response.json();
+                handleApiError(errorData);
+            }
+        } catch (error) {
+            // خطای شبکه
+            showError('خطا در ارتباط با سرور: ' + error.message);
+        }
+    }
+
+    // تابع برای به‌روزرسانی وضعیت پست
+    async function updatePostStatus(status) {
+        try {
+            const endpoint = status === 'PUBLISHED' ? 'publish' : 'unpublish';
+            const response = await fetch(`/api/posts/${currentPostId}/${endpoint}`, {
+                method: 'PATCH'
+            });
+
+            if (response.ok) {
+                // موفقیت‌آمیز
+                document.getElementById('status').value = status;
+                togglePublishButtons(status === 'PUBLISHED');
+                showSuccess(`پست با موفقیت ${status === 'PUBLISHED' ? 'منتشر' : 'از حالت انتشار خارج'} شد`);
+
+                // به‌روزرسانی اطلاعات محلی
+                currentPostData.status = status;
+                document.getElementById('updatedAt').textContent = formatDate(new Date().toISOString());
+            } else {
+                throw new Error('خطا در تغییر وضعیت پست');
+            }
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    // تابع برای نمایش مودال حذف
+    function showDeleteModal() {
+        document.getElementById('deletePostTitle').textContent = currentPostData.title;
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+
+    // تابع برای حذف پست
+    async function deletePost() {
+        try {
+            const response = await fetch(`/api/posts/${currentPostId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                // بستن مودال
+                const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                deleteModal.hide();
+
+                // نمایش پیام موفقیت و انتقال به صفحه مدیریت
+                showSuccess('پست با موفقیت حذف شد. در حال انتقال...');
+                setTimeout(() => {
+                    window.location.href = '/admin/posts';
+                }, 2000);
+            } else {
+                throw new Error('خطا در حذف پست');
+            }
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    // تابع برای پیش‌نمایش پست
+    function previewPost() {
+        // باز کردن پست در تب جدید (اگر منتشر شده باشد)
+        if (currentPostData.status === 'PUBLISHED' && currentPostData.slug) {
+            window.open(`/post/${currentPostData.slug}`, '_blank');
+        } else {
+            showError('برای مشاهده پیش‌نمایش، پست باید منتشر شده باشد');
+        }
+    }
+
+    // تابع برای اعتبارسنجی فرم
+    function validateForm() {
+        let isValid = true;
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+
+        // اعتبارسنجی عنوان
+        if (!title || title.length < 3) {
+            document.getElementById('titleError').textContent = 'عنوان باید حداقل 3 کاراکتر داشته باشد';
+            isValid = false;
+        }
+
+        // اعتبارسنجی محتوا
+        if (!content || content.length < 10) {
+            document.getElementById('contentError').textContent = 'محتوا باید حداقل 10 کاراکتر داشته باشد';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // تابع برای مدیریت خطاهای API
+    function handleApiError(errorData) {
+        if (errorData && Array.isArray(errorData)) {
+            // خطاهای اعتبارسنجی
+            const errorMessages = errorData.map(err => {
+                const fieldError = document.getElementById(err.field + 'Error');
+                if (fieldError) {
+                    fieldError.textContent = err.message;
+                }
+                return err.message;
+            }).join(', ');
+
+            showError('خطا در اعتبارسنجی: ' + errorMessages);
+        } else if (errorData && errorData.message) {
+            // خطای عمومی
+            showError(errorData.message);
+        } else {
+            // خطای ناشناخته
+            showError('خطای ناشناخته از سمت سرور');
+        }
+    }
+
+    // تابع برای پاک کردن پیام‌ها
+    function clearMessages() {
+        document.getElementById('titleError').textContent = '';
+        document.getElementById('contentError').textContent = '';
+        document.getElementById('errorMsg').classList.add('d-none');
+        document.getElementById('successMsg').classList.add('d-none');
+    }
+
+    // تابع برای نمایش پیام موفقیت
+    function showSuccess(message = 'تغییرات با موفقیت ذخیره شد!') {
+        const successElement = document.getElementById('successMsg');
+        successElement.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        successElement.classList.remove('d-none');
+    }
+
+    // تابع برای نمایش خطا
+    function showError(message) {
+        const errorElement = document.getElementById('errorMsg');
+        errorElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        errorElement.classList.remove('d-none');
+    }
+</script>
+</body>
+</html>

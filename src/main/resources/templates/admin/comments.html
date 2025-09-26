@@ -1,10 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت کامنت‌ها - سینا بلاگ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
+<div th:replace="fragments/header :: header"></div>
+<div class="container-fluid">
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4 pt-3">
+            <h1 class="h3 mb-0 text-gray-800">مدیریت کامنت‌ها</h1>
+        </div>
+
+        <div class="row">
+            <!-- لیست کامنت‌ها -->
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">لیست کامنت‌ها</h6>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="loadAllComments()">همه</button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="loadPendingComments()">در انتظار</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="loadDeletedComments()">حذف‌شده</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center">
+                                <thead>
+                                <tr>
+                                    <th>نویسنده</th>
+                                    <th>ایمیل</th>
+                                    <th>متن</th>
+                                    <th>وضعیت</th>
+                                    <th>عملیات</th>
+                                </tr>
+                                </thead>
+                                <tbody id="commentTableBody">
+                                <!-- پر میشه با جاوااسکریپت -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- آمار کامنت‌ها -->
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">آمار کامنت‌ها</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="commentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const tableBody = document.getElementById("commentTableBody");
+
+    async function loadAllComments() {
+        const res = await fetch("/api/comments/pending"); // فقط pending
+        const pending = await res.json();
+
+        const deletedRes = await fetch("/api/comments/deleted");
+        const deleted = await deletedRes.json();
+
+        tableBody.innerHTML = "";
+
+        [...pending, ...deleted].forEach(c => renderRow(c));
+    }
+
+    async function loadPendingComments() {
+        const res = await fetch("/api/comments/pending");
+        const data = await res.json();
+        tableBody.innerHTML = "";
+        data.forEach(c => renderRow(c, "pending"));
+    }
+
+    async function loadDeletedComments() {
+        const res = await fetch("/api/comments/deleted");
+        const data = await res.json();
+        tableBody.innerHTML = "";
+        data.forEach(c => renderRow(c, "deleted"));
+    }
+
+    function renderRow(comment, type="") {
+        const status = comment.approved ? "تأیید شده" : (type === "deleted" ? "حذف‌شده" : "در انتظار");
+
+        tableBody.innerHTML += `
+            <tr>
+                <td>${comment.authorName}</td>
+                <td>${comment.authorEmail}</td>
+                <td>${comment.content}</td>
+                <td>${status}</td>
+                <td>
+                    ${type === "pending" ? `
+                        <button class="btn btn-sm btn-success" onclick="approveComment(${comment.id})"><i class="fas fa-check"></i></button>
+                        <button class="btn btn-sm btn-warning" onclick="rejectComment(${comment.id})"><i class="fas fa-times"></i></button>
+                    ` : ""}
+                    ${type === "deleted" ? `
+                        <button class="btn btn-sm btn-primary" onclick="restoreComment(${comment.id})"><i class="fas fa-undo"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="permanentDeleteComment(${comment.id})"><i class="fas fa-trash"></i></button>
+                    ` : ""}
+                </td>
+            </tr>
+        `;
+    }
+
+    async function approveComment(id) {
+        await fetch(`/api/comments/${id}/approve`, {method: "POST"});
+        loadPendingComments();
+    }
+
+    async function rejectComment(id) {
+        await fetch(`/api/comments/${id}/reject`, {method: "POST"});
+        loadPendingComments();
+    }
+
+    async function restoreComment(id) {
+        await fetch(`/api/comments/${id}/restore`, {method: "POST"});
+        loadDeletedComments();
+    }
+
+    async function permanentDeleteComment(id) {
+        if (!confirm("آیا مطمئن هستید؟")) return;
+        await fetch(`/api/comments/${id}/permanent`, {method: "DELETE"});
+        loadDeletedComments();
+    }
+
+    async function loadChart() {
+        const pendingCountRes = await fetch("/api/comments/pending/count");
+        const pendingCount = await pendingCountRes.json();
+
+        // برای تست ساده، فقط pending نمایش می‌دیم
+        new Chart(document.getElementById("commentChart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["در انتظار"],
+                datasets: [{
+                    data: [pendingCount],
+                    backgroundColor: ['#f6c23e']
+                }]
+            }
+        });
+    }
+
+    // بارگذاری اولیه
+    loadPendingComments();
+    loadChart();
+</script>
 </body>
 </html>

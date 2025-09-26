@@ -54,104 +54,73 @@
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="auth-card">
-                <!-- Header -->
                 <div class="auth-header">
                     <i class="bi bi-person-plus display-4 mb-3"></i>
                     <h3 class="fw-bold">ایجاد حساب کاربری</h3>
                     <p class="mb-0">فرم زیر را برای ثبت‌نام تکمیل کنید</p>
                 </div>
 
-                <!-- Body -->
                 <div class="auth-body">
-                    <!-- Success Message -->
-                    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <!-- پیام موفقیت -->
+                    <div id="success-msg" class="alert alert-success alert-dismissible fade show d-none" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i>
                         ثبت‌نام با موفقیت انجام شد. اکنون می‌توانید وارد شوید.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="btn-close" onclick="this.parentElement.classList.add('d-none')"></button>
                     </div>
 
-                    <!-- Error Message -->
-                    <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <!-- پیام خطا -->
+                    <div id="error-msg" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <span th:text="${#strings.listJoin(#fields.errors('*'), ', ')}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <span id="error-text"></span>
+                        <button type="button" class="btn-close" onclick="this.parentElement.classList.add('d-none')"></button>
                     </div>
 
-                    <!-- Registration Form -->
-                    <form th:action="@{/auth/register}" th:object="${user}" method="post">
+                    <!-- فرم ثبت‌نام -->
+                    <form id="register-form">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="fullName" class="form-label">
-                                    <i class="bi bi-person me-1 text-primary"></i>نام کامل
-                                </label>
-                                <input type="text" class="form-control" id="fullName"
-                                       th:field="*{fullName}" placeholder="نام و نام خانوادگی"
-                                       required>
+                                <label for="fullName" class="form-label"><i class="bi bi-person me-1 text-primary"></i>نام کامل</label>
+                                <input type="text" class="form-control" id="fullName" placeholder="نام و نام خانوادگی" required>
                             </div>
-
                             <div class="col-md-6 mb-3">
-                                <label for="username" class="form-label">
-                                    <i class="bi bi-at me-1 text-primary"></i>نام کاربری
-                                </label>
-                                <input type="text" class="form-control" id="username"
-                                       th:field="*{userName}" placeholder="نام کاربری دلخواه"
-                                       required>
+                                <label for="username" class="form-label"><i class="bi bi-at me-1 text-primary"></i>نام کاربری</label>
+                                <input type="text" class="form-control" id="username" placeholder="نام کاربری دلخواه" required>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="bi bi-envelope me-1 text-primary"></i>آدرس ایمیل
-                            </label>
-                            <input type="email" class="form-control" id="email"
-                                   th:field="*{email}" placeholder="example@email.com"
-                                   required>
+                            <label for="email" class="form-label"><i class="bi bi-envelope me-1 text-primary"></i>ایمیل</label>
+                            <input type="email" class="form-control" id="email" placeholder="example@email.com" required>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label">
-                                    <i class="bi bi-lock me-1 text-primary"></i>رمز عبور
-                                </label>
-                                <input type="password" class="form-control" id="password"
-                                       th:field="*{password}" placeholder="رمز عبور قوی"
-                                       required minlength="6">
+                                <label for="password" class="form-label"><i class="bi bi-lock me-1 text-primary"></i>رمز عبور</label>
+                                <input type="password" class="form-control" id="password" placeholder="رمز عبور قوی" required minlength="6">
                                 <div class="password-strength bg-secondary mt-1"></div>
                                 <small class="text-muted">حداقل ۶ کاراکتر</small>
                             </div>
-
                             <div class="col-md-6 mb-3">
-                                <label for="confirmPassword" class="form-label">
-                                    <i class="bi bi-lock-fill me-1 text-primary"></i>تکرار رمز عبور
-                                </label>
-                                <input type="password" class="form-control" id="confirmPassword"
-                                       placeholder="تکرار رمز عبور" required>
+                                <label for="confirmPassword" class="form-label"><i class="bi bi-lock-fill me-1 text-primary"></i>تکرار رمز عبور</label>
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="تکرار رمز عبور" required>
                             </div>
                         </div>
 
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="terms" required>
-                            <label class="form-check-label" for="terms">
-                                با <a href="#" class="text-primary text-decoration-none">قوانین و مقررات</a> موافقم
-                            </label>
+                            <label class="form-check-label" for="terms">با <a href="#" class="text-primary text-decoration-none">قوانین و مقررات</a> موافقم</label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
-                            <i class="bi bi-person-plus me-2"></i>ایجاد حساب کاربری
-                        </button>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3"><i class="bi bi-person-plus me-2"></i>ایجاد حساب کاربری</button>
                     </form>
 
                     <div class="text-center">
                         <p class="mb-0">قبلا حساب دارید؟</p>
-                        <a th:href="@{/auth/login}" class="btn btn-outline-primary btn-lg w-100 mt-2">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>ورود به حساب موجود
-                        </a>
+                        <a href="/auth/login" class="btn btn-outline-primary btn-lg w-100 mt-2"><i class="bi bi-box-arrow-in-right me-2"></i>ورود به حساب موجود</a>
                     </div>
 
                     <div class="text-center mt-4">
-                        <a th:href="@{/}" class="text-decoration-none text-muted">
-                            <i class="bi bi-arrow-right me-1"></i>بازگشت به صفحه اصلی
-                        </a>
+                        <a href="/" class="text-decoration-none text-muted"><i class="bi bi-arrow-right me-1"></i>بازگشت به صفحه اصلی</a>
                     </div>
                 </div>
             </div>
@@ -159,25 +128,61 @@
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Password Strength Script -->
 <script>
+    // نمایش قدرت رمز عبور
     document.getElementById('password').addEventListener('input', function() {
         const password = this.value;
         const strengthBar = document.querySelector('.password-strength');
         let strength = 0;
-
         if (password.length >= 6) strength += 1;
         if (password.match(/[a-z]/)) strength += 1;
         if (password.match(/[A-Z]/)) strength += 1;
         if (password.match(/[0-9]/)) strength += 1;
         if (password.match(/[^a-zA-Z0-9]/)) strength += 1;
-
         const colors = ['bg-danger', 'bg-warning', 'bg-info', 'bg-primary', 'bg-success'];
         strengthBar.className = 'password-strength ' + colors[strength - 1];
         strengthBar.style.width = (strength * 20) + '%';
+    });
+
+    // ثبت‌نام با REST API
+    document.getElementById('register-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const fullName = document.getElementById('fullName').value.trim();
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+        if(password !== confirmPassword){
+            document.getElementById('error-text').textContent = 'رمز عبور و تکرار آن یکسان نیست';
+            document.getElementById('error-msg').classList.remove('d-none');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fullName, username, email, password })
+            });
+
+            const data = await response.json();
+
+            if(response.ok){
+                document.getElementById('success-msg').classList.remove('d-none');
+                this.reset();
+                document.querySelector('.password-strength').style.width = '0%';
+            } else {
+                document.getElementById('error-text').textContent = data.message || 'خطایی رخ داده است';
+                document.getElementById('error-msg').classList.remove('d-none');
+            }
+        } catch (err) {
+            document.getElementById('error-text').textContent = 'ارتباط با سرور برقرار نشد';
+            document.getElementById('error-msg').classList.remove('d-none');
+        }
     });
 </script>
 </body>

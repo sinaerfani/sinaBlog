@@ -23,10 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     // ==================== عملیات CRUD ====================
 
-    /**
-     * ایجاد دسته‌بندی جدید
-     * بررسی اعتبار داده‌ها، تولید خودکار Slug در صورت نیاز و بررسی تکراری نبودن نام و Slug
-     */
+
     @Override
     public Category createCategory(Category category) {
         validateCategory(category);

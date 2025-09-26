@@ -1,5 +1,6 @@
 package com.example.sinablog.cotroller.user;
 
+import com.example.sinablog.Service.Role.RoleService;
 import com.example.sinablog.Service.User.UserService;
 import com.example.sinablog.customeExeption.RuleException;
 import com.example.sinablog.dtos.user.PasswordChangeDto;
@@ -25,9 +26,11 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private  final RoleService roleService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     // دریافت همه کاربران (فقط ادمین)
@@ -101,7 +104,9 @@ public class UserController {
             if (updateDto.getEnabled() != null && isAdmin()) {
                 user.setEnabled(updateDto.getEnabled());
             }
-
+            if (updateDto.getRole() != null && isAdmin()) {
+                user.setRole(roleService.findOrCreateRole(RoleName.valueOf(updateDto.getRole())));
+            }
             User updatedUser = userService.updateUser(id, user);
             return ResponseEntity.ok(convertToResponseDto(updatedUser));
 

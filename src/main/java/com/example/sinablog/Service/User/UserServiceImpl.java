@@ -71,6 +71,9 @@ public class UserServiceImpl implements UserService {
         existingUser.setFullName(user.getFullName());
         existingUser.setUpdatedAt(LocalDateTime.now());
 
+        if (user.getRole() != null) {
+            existingUser.setRole(roleService.findOrCreateRole(user.getRole().getName()));
+        }
         return userRepository.save(existingUser);
     }
 

@@ -1,10 +1,14 @@
 package com.example.sinablog.cotroller;
 
 import com.example.sinablog.Service.Post.PostService;
+import com.example.sinablog.Service.User.UserService;
+import com.example.sinablog.Service.categoryService.CategoryService;
 import com.example.sinablog.customeExeption.RuleException;
 import com.example.sinablog.dtos.post.PostDto;
 import com.example.sinablog.dtos.post.PostResponseDto;
+import com.example.sinablog.model.Category;
 import com.example.sinablog.model.Post;
+import com.example.sinablog.model.User;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -21,18 +26,29 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final UserService userService;
+    private final CategoryService categoryService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, UserService userService, CategoryService categoryService) {
         this.postService = postService;
+        this.userService = userService;
+        this.categoryService = categoryService;
     }
+
 
     // ==================== ایجاد پست ====================
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('AUTHOR')")
-    public ResponseEntity<PostResponseDto> createPost(@Valid @RequestBody PostDto postDto) {
+    public ResponseEntity<PostResponseDto> createPost(@Valid @RequestBody PostDto postDto, Principal principal) {
         try {
             Post post = convertToEntity(postDto);
+
+            // گرفتن کاربر لاگین شده
+            String username = principal.getName();
+            User author = userService.getUserByUsername(username).orElseThrow(()->new  RuleException("user not found"));
+            post.setAuthor(author);
+
             Post createdPost = postService.createPost(post);
             PostResponseDto response = convertToResponseDto(createdPost);
             return ResponseEntity.ok(response);
@@ -272,7 +288,13 @@ public class PostController {
         post.setContent(postDto.getContent());
         post.setExcerpt(postDto.getExcerpt());
         post.setStatus(postDto.getStatus());
-        // باید author, category, tags را از طریق ID ها تنظیم کنید
+
+        post.setTags(post.getTags());
+        Category category= categoryService.getCategoryById(postDto.getCategoryId())
+                .orElseThrow(() -> new RuleException("category not found"));
+
+        post.setCategory(category);
+
         return post;
     }
 

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -21,8 +22,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
 
-import java.time.LocalDateTime;
+import java.security.Principal;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,13 +46,11 @@ public class AuthController {
             User user = convertToEntity(userDto);
             User registeredUser = userService.registerUser(user, RoleName.ROLE_USER);
             UserResponseDto responseDto = convertToResponseDto(registeredUser);
-
             return ResponseEntity.ok(responseDto);
-
         } catch (RuleException e) {
-            throw e; // RuleException به صورت global handle می‌شود
+            throw e;
         } catch (Exception e) {
-            throw new RuleException("Registration failed");
+            throw new RuleException("Registration failed: " + e.getMessage());
         }
     }
 
@@ -73,12 +74,10 @@ public class AuthController {
                     SecurityContextHolder.getContext()
             );
 
-            // گرفتن اطلاعات کاربر
             String role = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.joining(","));
 
-            // پیدا کردن کاربر کامل برای گرفتن fullName
             User user = userService.getUserByUsername(loginRequestDto.getUsername())
                     .orElseThrow(() -> new RuleException("User not found after authentication"));
 
@@ -86,7 +85,7 @@ public class AuthController {
             response.setMessage("Login successful");
             response.setUsername(user.getUsername());
             response.setFullName(user.getFullName());
-            response.setRole(RoleName.valueOf(role.replace("ROLE_", "")));
+            response.setRole(user.getRole().getName());
             response.setSuccess(true);
 
             return ResponseEntity.ok(response);
@@ -101,9 +100,8 @@ public class AuthController {
             throw new RuleException("Authentication failed: " + e.getMessage());
         }
     }
-
     @PostMapping("/logout")
-    public ResponseEntity<LoginResponseDto> logout(HttpServletRequest request) {
+    public ResponseEntity<LoginResponseDto> logout(HttpServletRequest request, HttpServletResponse response) {
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
@@ -111,45 +109,47 @@ public class AuthController {
             }
             SecurityContextHolder.clearContext();
 
-            LoginResponseDto response = new LoginResponseDto();
-            response.setMessage("Logout successful");
-            response.setSuccess(true);
+            // پاک کردن کوکی
+            Cookie cookie = new Cookie("JSESSIONID", null);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
 
-            return ResponseEntity.ok(response);
+            LoginResponseDto dto = new LoginResponseDto();
+            dto.setMessage("Logout successful");
+            dto.setSuccess(true);
 
+            return ResponseEntity.ok(dto);
         } catch (Exception e) {
             throw new RuleException("Logout failed: " + e.getMessage());
         }
     }
 
+
     @GetMapping("/current-user")
-    public ResponseEntity<UserResponseDto> getCurrentUser() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new RuleException("Not authenticated");
-            }
-
-            String username = authentication.getName();
-            User user = userService.getUserByUsername(username)
-                    .orElseThrow(() -> new RuleException("User not found"));
-
-            UserResponseDto responseDto = convertToResponseDto(user);
-            return ResponseEntity.ok(responseDto);
-
-        } catch (RuleException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuleException("Failed to get current user: " + e.getMessage());
+    public ResponseEntity<?> getCurrentUser(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("The user is not logged in");
         }
+
+        User user = userService.getUserByUsername(principal.getName())
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(404).body("user not found");
+        }
+
+        return ResponseEntity.ok(convertToResponseDto(user));
     }
 
-    // متدهای کمکی برای تبدیل
+
+    // متدهای کمکی
     private User convertToEntity(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword()); // بعداً در سرویس رمزنگاری می‌شود
+        user.setPassword(userDto.getPassword());
         user.setFullName(userDto.getFullName());
         return user;
     }
@@ -160,7 +160,7 @@ public class AuthController {
         responseDto.setUsername(user.getUsername());
         responseDto.setEmail(user.getEmail());
         responseDto.setFullName(user.getFullName());
-        responseDto.setRole(user.getRole().getName());
+        responseDto.setRole(user.getRole() != null ? user.getRole().getName() : null);
         responseDto.setCreatedAt(user.getCreatedAt());
         responseDto.setUpdatedAt(user.getUpdatedAt());
         responseDto.setEnabled(user.isEnabled());
