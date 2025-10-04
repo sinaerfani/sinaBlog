@@ -19,10 +19,10 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userRepository.findByUsernameAndDisableDateIsNull(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User.not.found.with.username"));
 
         if (!user.isEnabled()) {
-            throw new UsernameNotFoundException("User account is disabled");
+            throw new UsernameNotFoundException("User.account.is.disabled");
         }
 
         return org.springframework.security.core.userdetails.User

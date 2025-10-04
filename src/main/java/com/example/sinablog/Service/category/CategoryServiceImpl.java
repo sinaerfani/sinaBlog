@@ -1,4 +1,4 @@
-package com.example.sinablog.Service.categoryService;
+package com.example.sinablog.Service.category;
 
 import com.example.sinablog.Repository.CategoryRepository;
 import com.example.sinablog.customeExeption.RuleException;
@@ -35,21 +35,18 @@ public class CategoryServiceImpl implements CategoryService {
 
         // بررسی عدم وجود دسته‌بندی فعال با همین نام
         if (categoryRepository.existsByNameAndDisableDateIsNull(category.getName())) {
-            throw new RuleException("Category with name '" + category.getName() + "' already exists");
+            throw new RuleException("Category.with.name.already.exists");
         }
 
         // بررسی عدم وجود دسته‌بندی فعال با همین Slug
         if (categoryRepository.existsBySlugAndDisableDateIsNull(category.getSlug())) {
-            throw new RuleException("Category with slug '" + category.getSlug() + "' already exists");
+            throw new RuleException("Category.with.slug.already.exists");
         }
 
         return categoryRepository.save(category);
     }
 
-    /**
-     * به‌روزرسانی دسته‌بندی موجود
-     * بررسی تغییرات نام و Slug برای جلوگیری از تکراری بودن
-     */
+
     @Override
     public Category updateCategory(Long id, Category category) {
         Category existingCategory = getActiveCategoryById(id);
@@ -58,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (category.getName() != null && !category.getName().trim().isEmpty()) {
             if (!existingCategory.getName().equals(category.getName()) &&
                     categoryRepository.existsByNameAndIdNotAndDisableDateIsNull(category.getName(), id)) {
-                throw new RuleException("Category with name already exists");
+                throw new RuleException("Category.with.name.already.exists");
             }
             existingCategory.setName(category.getName());
         }
@@ -67,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (category.getSlug() != null && !category.getSlug().trim().isEmpty()) {
             if (!existingCategory.getSlug().equals(category.getSlug()) &&
                     categoryRepository.existsBySlugAndIdNotAndDisableDateIsNull(category.getSlug(), id)) {
-                throw new RuleException("Category with slug already exists");
+                throw new RuleException("Category.with.slug.already.exists");
             }
             existingCategory.setSlug(category.getSlug());
         }
@@ -104,7 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Optional<Category> getCategoryByName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new RuleException("Category name cannot be empty");
+            throw new RuleException("Category.name.cannot.be.empty");
         }
         return categoryRepository.findByNameAndDisableDateIsNull(name);
     }
@@ -115,7 +112,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Optional<Category> getCategoryBySlug(String slug) {
         if (slug == null || slug.trim().isEmpty()) {
-            throw new RuleException("Category slug cannot be empty");
+            throw new RuleException("Category.slug.cannot.be.empty");
         }
         return categoryRepository.findBySlugAndDisableDateIsNull(slug);
     }
@@ -144,7 +141,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> searchCategories(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
-            throw new RuleException("Search keyword cannot be empty");
+            throw new RuleException("Search.keyword.cannot.be.empty");
         }
         return categoryRepository.searchActiveCategories(keyword);
     }
@@ -165,10 +162,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void restoreCategory(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuleException("Category not found with ID "));
+                .orElseThrow(() -> new RuleException("Category.not.found.with.ID"));
 
         if (category.getDisableDate() == null) {
-            throw new RuleException("Category is not deleted");
+            throw new RuleException("Category.is.not.deleted");
         }
 
         category.setDisableDate(null);
@@ -183,7 +180,7 @@ public class CategoryServiceImpl implements CategoryService {
     @PreAuthorize("hasRole('ADMIN')")
     public void permanentDeleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuleException("Category not found with ID"));
+                .orElseThrow(() -> new RuleException("Category.not.found.with.ID"));
         categoryRepository.delete(category);
     }
 
@@ -213,7 +210,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean existsByName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new RuleException("Category name cannot be empty");
+            throw new RuleException("Category.name.cannot.be.empty");
         }
         return categoryRepository.existsByNameAndDisableDateIsNull(name);
     }
@@ -224,7 +221,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean existsBySlug(String slug) {
         if (slug == null || slug.trim().isEmpty()) {
-            throw new RuleException("Category slug cannot be empty");
+            throw new RuleException("Category.slug.cannot.be.empty");
         }
         return categoryRepository.existsBySlugAndDisableDateIsNull(slug);
     }
@@ -235,10 +232,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean existsByNameAndIdNot(String name, Long id) {
         if (name == null || name.trim().isEmpty()) {
-            throw new RuleException("Category name cannot be empty");
+            throw new RuleException("Category.name.cannot.be.empty");
         }
         if (id == null) {
-            throw new RuleException("Category ID cannot be null");
+            throw new RuleException("Category.ID.cannot.be.null");
         }
         return categoryRepository.existsByNameAndIdNotAndDisableDateIsNull(name, id);
     }
@@ -249,10 +246,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean existsBySlugAndIdNot(String slug, Long id) {
         if (slug == null || slug.trim().isEmpty()) {
-            throw new RuleException("Category slug cannot be empty");
+            throw new RuleException("Category.slug.cannot.be.empty");
         }
         if (id == null) {
-            throw new RuleException("Category ID cannot be null");
+            throw new RuleException("Category.ID.cannot.be.null");
         }
         return categoryRepository.existsBySlugAndIdNotAndDisableDateIsNull(slug, id);
     }
@@ -264,7 +261,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     private Category getActiveCategoryById(Long id) {
         return categoryRepository.findByIdAndDisableDateIsNull(id)
-                .orElseThrow(() -> new RuleException("Category not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("Category.not.found.with.ID"));
     }
 
     /**
@@ -293,10 +290,10 @@ public class CategoryServiceImpl implements CategoryService {
      */
     private void validateCategory(Category category) {
         if (category == null) {
-            throw new RuleException("Category cannot be null");
+            throw new RuleException("Category.cannot.be.null");
         }
         if (category.getName() == null || category.getName().trim().isEmpty()) {
-            throw new RuleException("Category name cannot be empty");
+            throw new RuleException("Category.name.cannot.be.empty");
         }
     }
 }

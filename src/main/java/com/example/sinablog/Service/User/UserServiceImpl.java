@@ -35,11 +35,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user, RoleName roleName) {
         if (existsByUsername(user.getUsername())) {
-            throw new RuleException("Username already exists");
+            throw new RuleException("Username.already.exists");
         }
 
         if (existsByEmail(user.getEmail())) {
-            throw new RuleException("Email already exists");
+            throw new RuleException("Email.already.exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -54,16 +54,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(Long id, User user) {
         User existingUser = getUserById(id)
-                .orElseThrow(() -> new RuleException("User not found with ID"));
+                .orElseThrow(() -> new RuleException("User.not.found.with.ID"));
 
         if (!existingUser.getUsername().equals(user.getUsername()) &&
                 existsByUsername(user.getUsername())) {
-            throw new RuleException("Username already exists");
+            throw new RuleException("Username.already.exists");
         }
 
         if (!existingUser.getEmail().equals(user.getEmail()) &&
                 existsByEmail(user.getEmail())) {
-            throw new RuleException("Email already exists");
+            throw new RuleException("Email.already.exists");
         }
 
         existingUser.setUsername(user.getUsername());
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         User user = getUserById(id)
-                .orElseThrow(() -> new RuleException("User not found with ID"));
+                .orElseThrow(() -> new RuleException("User.not.found.with.ID"));
 
         user.setDisableDate(LocalDateTime.now());
         user.setEnabled(false);
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeUserStatus(Long id, boolean enabled) {
         User user = getUserById(id)
-                .orElseThrow(() -> new RuleException("User not found with ID"));
+                .orElseThrow(() -> new RuleException("User.not.found.with.ID"));
 
         user.setEnabled(enabled);
         user.setUpdatedAt(LocalDateTime.now());
@@ -133,10 +133,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(Long userId, String oldPassword, String newPassword) {
         User user = getUserById(userId)
-                .orElseThrow(() -> new RuleException("User not found with ID"));
+                .orElseThrow(() -> new RuleException("User.not.found.with.ID"));
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new RuleException("Current password is incorrect");
+            throw new RuleException("Current.password.is.incorrect");
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -173,7 +173,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void restoreUser(Long id) {
         User user = userRepository.findByIdAndDisableDateIsNotNull(id)
-                .orElseThrow(() -> new RuleException("Deleted user not found with ID"));
+                .orElseThrow(() -> new RuleException("Deleted.user.not.found.with.ID"));
 
         user.setDisableDate(null);
         user.setEnabled(true);
@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void permanentDeleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuleException("User not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("User.not.found.with.ID"));
 
         userRepository.delete(user);
     }

@@ -2,7 +2,7 @@ package com.example.sinablog.cotroller;
 
 import com.example.sinablog.Service.Post.PostService;
 import com.example.sinablog.Service.User.UserService;
-import com.example.sinablog.Service.categoryService.CategoryService;
+import com.example.sinablog.Service.category.CategoryService;
 import com.example.sinablog.customeExeption.RuleException;
 import com.example.sinablog.dtos.post.PostDto;
 import com.example.sinablog.dtos.post.PostResponseDto;
@@ -46,7 +46,7 @@ public class PostController {
 
             // گرفتن کاربر لاگین شده
             String username = principal.getName();
-            User author = userService.getUserByUsername(username).orElseThrow(()->new  RuleException("user not found"));
+            User author = userService.getUserByUsername(username).orElseThrow(()->new  RuleException("user.not.found"));
             post.setAuthor(author);
 
             Post createdPost = postService.createPost(post);
@@ -55,7 +55,7 @@ public class PostController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to create post: " + e.getMessage());
+            throw new RuleException("Failed.to.create.post");
         }
     }
 
@@ -70,7 +70,7 @@ public class PostController {
                     .toList();
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new RuleException("Failed to get posts: " + e.getMessage());
+            throw new RuleException("Failed.to.get.posts");
         }
     }
 
@@ -87,7 +87,7 @@ public class PostController {
             Page<PostResponseDto> response = posts.map(this::convertToResponseDto);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new RuleException("Failed to get posts: " + e.getMessage());
+            throw new RuleException("Failed.to.get.posts");
         }
     }
 
@@ -95,13 +95,13 @@ public class PostController {
     public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long id) {
         try {
             Post post = postService.getPostById(id)
-                    .orElseThrow(() -> new RuleException("Post not found with ID: " + id));
+                    .orElseThrow(() -> new RuleException("Post.not.found.with.ID"));
             PostResponseDto response = convertToResponseDto(post);
             return ResponseEntity.ok(response);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to get post: " + e.getMessage());
+            throw new RuleException("Failed.to.get.post");
         }
     }
 
@@ -109,13 +109,13 @@ public class PostController {
     public ResponseEntity<PostResponseDto> getPostBySlug(@PathVariable String slug) {
         try {
             Post post = postService.getPostBySlug(slug)
-                    .orElseThrow(() -> new RuleException("Post not found with slug: " + slug));
+                    .orElseThrow(() -> new RuleException("Post.not.found.with.slug"));
             PostResponseDto response = convertToResponseDto(post);
             return ResponseEntity.ok(response);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to get post: " + e.getMessage());
+            throw new RuleException("Failed.to.get.post");
         }
     }
 
@@ -130,7 +130,7 @@ public class PostController {
                     .toList();
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new RuleException("Failed to get published posts: " + e.getMessage());
+            throw new RuleException("Failed.to.get.published.posts");
         }
     }
 
@@ -145,7 +145,7 @@ public class PostController {
             Page<PostResponseDto> response = posts.map(this::convertToResponseDto);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new RuleException("Failed to get published posts: " + e.getMessage());
+            throw new RuleException("Failed.to.get.published.posts");
         }
     }
 
@@ -161,7 +161,7 @@ public class PostController {
                     .toList();
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new RuleException("Failed to search posts: " + e.getMessage());
+            throw new RuleException("Failed.to.search.posts");
         }
     }
 
@@ -175,7 +175,7 @@ public class PostController {
                     .toList();
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new RuleException("Failed to search published posts: " + e.getMessage());
+            throw new RuleException("Failed.to.search.published.posts");
         }
     }
 
@@ -194,7 +194,7 @@ public class PostController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to update post: " + e.getMessage());
+            throw new RuleException("Failed.to.update.post");
         }
     }
 
@@ -206,13 +206,13 @@ public class PostController {
         try {
             postService.publishPost(id);
             Post post = postService.getPostById(id)
-                    .orElseThrow(() -> new RuleException("Post not found with ID: " + id));
+                    .orElseThrow(() -> new RuleException("Post.not.found.with.ID"));
             PostResponseDto response = convertToResponseDto(post);
             return ResponseEntity.ok(response);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to publish post: " + e.getMessage());
+            throw new RuleException("Failed.to.publish.post");
         }
     }
 
@@ -222,13 +222,13 @@ public class PostController {
         try {
             postService.unpublishPost(id);
             Post post = postService.getPostById(id)
-                    .orElseThrow(() -> new RuleException("Post not found with ID: " + id));
+                    .orElseThrow(() -> new RuleException("Post.not.found.with.ID"));
             PostResponseDto response = convertToResponseDto(post);
             return ResponseEntity.ok(response);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to unpublish post: " + e.getMessage());
+            throw new RuleException("Failed.to.unpublish.post");
         }
     }
 
@@ -239,11 +239,11 @@ public class PostController {
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         try {
             postService.deletePost(id);
-            return ResponseEntity.ok("Post deleted successfully");
+            return ResponseEntity.ok("Post.deleted.successfully");
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to delete post: " + e.getMessage());
+            throw new RuleException("Failed.to.delete.post");
         }
     }
 
@@ -252,11 +252,11 @@ public class PostController {
     public ResponseEntity<String> permanentDeletePost(@PathVariable Long id) {
         try {
             postService.permanentDeletePost(id);
-            return ResponseEntity.ok("Post permanently deleted");
+            return ResponseEntity.ok("Post.permanently.deleted");
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to permanently delete post: " + e.getMessage());
+            throw new RuleException("Failed.to.permanently.delete.post");
         }
     }
 
@@ -268,13 +268,13 @@ public class PostController {
         try {
             postService.restorePost(id);
             Post post = postService.getPostById(id)
-                    .orElseThrow(() -> new RuleException("Post not found with ID: " + id));
+                    .orElseThrow(() -> new RuleException("Post.not.found.with.ID"));
             PostResponseDto response = convertToResponseDto(post);
             return ResponseEntity.ok(response);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to restore post: " + e.getMessage());
+            throw new RuleException("Failed.to.restore.post");
         }
     }
 
@@ -291,7 +291,7 @@ public class PostController {
 
         post.setTags(post.getTags());
         Category category= categoryService.getCategoryById(postDto.getCategoryId())
-                .orElseThrow(() -> new RuleException("category not found"));
+                .orElseThrow(() -> new RuleException("category.not.found"));
 
         post.setCategory(category);
 

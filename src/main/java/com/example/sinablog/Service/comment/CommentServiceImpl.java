@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment updateComment(Long id, Comment comment) {
         if (id == null) {
-            throw new RuleException("Comment ID cannot be null");
+            throw new RuleException("Comment.ID.cannot.be.null");
         }
 
         Comment existingComment = getActiveCommentById(id);
@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Optional<Comment> getCommentById(Long id) {
         if (id == null) {
-            throw new RuleException("Comment ID cannot be null");
+            throw new RuleException("Comment.ID.cannot.be.null");
         }
         return commentRepository.findByIdAndDisableDateIsNull(id);
     }
@@ -170,10 +170,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void restoreComment(Long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuleException("Comment not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("Comment.not.found.with.ID"));
 
         if (comment.getDisableDate() == null) {
-            throw new RuleException("Comment is not deleted");
+            throw new RuleException("Comment.is.not.deleted");
         }
 
         comment.setDisableDate(null);
@@ -185,7 +185,7 @@ public class CommentServiceImpl implements CommentService {
     @PreAuthorize("hasRole('ADMIN')")
     public void permanentDeleteComment(Long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuleException("Comment not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("Comment.not.found.with.ID"));
         commentRepository.delete(comment);
     }
 
@@ -254,7 +254,7 @@ public class CommentServiceImpl implements CommentService {
 
     private Comment getActiveCommentById(Long id) {
         return commentRepository.findByIdAndDisableDateIsNull(id)
-                .orElseThrow(() -> new RuleException("Comment not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("Comment.not.found.with.ID"));
     }
 
     private void performSoftDelete(Comment comment) {
@@ -265,37 +265,37 @@ public class CommentServiceImpl implements CommentService {
 
     private void validateComment(Comment comment) {
         if (comment == null) {
-            throw new RuleException("Comment cannot be null");
+            throw new RuleException("Comment.cannot.be.null");
         }
         if (comment.getContent() == null || comment.getContent().trim().isEmpty()) {
-            throw new RuleException("Comment content cannot be empty");
+            throw new RuleException("Comment.content.cannot.be.empty");
         }
         if (comment.getAuthorName() == null || comment.getAuthorName().trim().isEmpty()) {
-            throw new RuleException("Author name cannot be empty");
+            throw new RuleException("Author.name.cannot.be.empty");
         }
         if (comment.getAuthorEmail() == null || comment.getAuthorEmail().trim().isEmpty()) {
-            throw new RuleException("Author email cannot be empty");
+            throw new RuleException("Author.email.cannot.be.empty");
         }
         if (comment.getPost() == null || comment.getPost().getId() == null) {
-            throw new RuleException("Comment must be associated with a post");
+            throw new RuleException("Comment.must.be.associated.with.a.post");
         }
     }
 
     private void validatePostId(Long postId) {
         if (postId == null) {
-            throw new RuleException("Post ID cannot be null");
+            throw new RuleException("Post.ID.cannot.be.null");
         }
     }
 
     private void validateEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
-            throw new RuleException("Email cannot be empty");
+            throw new RuleException("Email.cannot.be.empty");
         }
     }
 
     private void validateLimit(int limit) {
         if (limit <= 0) {
-            throw new RuleException("Limit must be greater than 0");
+            throw new RuleException("Limit.must.be.greater.than.0");
         }
     }
 }

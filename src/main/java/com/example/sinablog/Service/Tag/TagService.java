@@ -17,11 +17,9 @@ public interface TagService {
     Optional<Tag> getTagBySlug(String slug);
     List<Tag> getAllTags();
     Page<Tag> getAllTags(Pageable pageable);
-    List<Tag> searchTagsByName(String name);
-    List<Tag> searchTagsBySlug(String slug);
     boolean existsByName(String name);
     boolean existsBySlug(String slug);
-    long countTags();
+
 
     List<Tag> getTagsByPostId(Long postId);
     List<Tag> getOrCreateTags(List<String> tagNames);

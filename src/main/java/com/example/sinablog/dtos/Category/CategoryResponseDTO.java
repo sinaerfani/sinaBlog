@@ -9,7 +9,7 @@ public class CategoryResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Constructors
+
     public CategoryResponseDTO() {}
 
     public CategoryResponseDTO(Long id, String name, String slug, String description,
@@ -22,7 +22,7 @@ public class CategoryResponseDTO {
         this.updatedAt = updatedAt;
     }
 
-    // Getters and Setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

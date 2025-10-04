@@ -32,7 +32,7 @@ public class RoleController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to create role");
+            throw new RuleException("Failed.to.create.role");
         }
     }
 
@@ -43,7 +43,7 @@ public class RoleController {
             List<Role> roles = roleService.getAllRoles();
             return ResponseEntity.ok(roles);
         } catch (Exception e) {
-            throw new RuleException("Failed to get roles");
+            throw new RuleException("Failed.to.get.roles");
         }
     }
 
@@ -52,12 +52,12 @@ public class RoleController {
     public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
         try {
             Role role = roleService.getRoleById(id)
-                    .orElseThrow(() -> new RuleException("Role not found with ID"));
+                    .orElseThrow(() -> new RuleException("Role.not.found.with.ID"));
             return ResponseEntity.ok(role);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to get role");
+            throw new RuleException("Failed.to.get.role");
         }
     }
 
@@ -66,12 +66,12 @@ public class RoleController {
     public ResponseEntity<Role> getRoleByName(@PathVariable RoleName roleName) {
         try {
             Role role = roleService.getRoleByName(roleName)
-                    .orElseThrow(() -> new RuleException("Role not found with name"));
+                    .orElseThrow(() -> new RuleException("Role.not.found.with.name"));
             return ResponseEntity.ok(role);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to get role");
+            throw new RuleException("Failed.to.get.role");
         }
     }
 
@@ -84,7 +84,7 @@ public class RoleController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to update role");
+            throw new RuleException("Failed.to.update.role");
         }
     }
 
@@ -93,11 +93,11 @@ public class RoleController {
     public ResponseEntity<String> deleteRole(@PathVariable Long id) {
         try {
             roleService.deleteRole(id);
-            return ResponseEntity.ok("Role deleted successfully");
+            return ResponseEntity.ok("Role.deleted.successfully");
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to delete role: " + e.getMessage());
+            throw new RuleException("Failed.to.delete.role");
         }
     }
 
@@ -108,7 +108,7 @@ public class RoleController {
             boolean exists = roleService.existsByName(roleName);
             return ResponseEntity.ok(exists);
         } catch (Exception e) {
-            throw new RuleException("Failed to check role existence");
+            throw new RuleException("Failed.to.check.role.existence");
         }
     }
 
@@ -117,13 +117,13 @@ public class RoleController {
     public ResponseEntity<Boolean> checkRoleInUse(@PathVariable Long id) {
         try {
             Role role = roleService.getRoleById(id)
-                    .orElseThrow(() -> new RuleException("Role not found with ID"));
+                    .orElseThrow(() -> new RuleException("Role.not.found.with.ID"));
             boolean inUse = roleService.isRoleInUse(role.getName());
             return ResponseEntity.ok(inUse);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to check role usage");
+            throw new RuleException("Failed.to.check.role.usage");
         }
     }
 
@@ -132,13 +132,13 @@ public class RoleController {
     public ResponseEntity<Long> countUsersWithRole(@PathVariable Long id) {
         try {
             Role role = roleService.getRoleById(id)
-                    .orElseThrow(() -> new RuleException("Role not found with ID: " + id));
+                    .orElseThrow(() -> new RuleException("Role.not.found.with.ID"));
             long count = roleService.countUsersWithRole(role.getName());
             return ResponseEntity.ok(count);
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Failed to count users with role");
+            throw new RuleException("Failed.to.count.users.with.role");
         }
     }
 

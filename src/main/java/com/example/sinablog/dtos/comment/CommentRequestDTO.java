@@ -5,13 +5,13 @@ import jakarta.validation.constraints.NotNull;
 
 public class CommentRequestDTO {
 
-    @NotBlank(message = "Comment content is required")
+    @NotBlank(message = "Comment.content.is.required")
     private String content;
 
-    @NotNull(message = "Post ID is required")
+    @NotNull(message = "Post.ID.is.required")
     private Long postId;
 
-    // Constructors
+
     public CommentRequestDTO() {}
 
     public CommentRequestDTO(String content, Long postId) {
@@ -19,7 +19,7 @@ public class CommentRequestDTO {
         this.postId = postId;
     }
 
-    // Getters and Setters
+
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 

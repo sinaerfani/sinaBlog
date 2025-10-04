@@ -52,12 +52,12 @@ public class CommentController {
         try {
             // بررسی وجود principal
             if (principal == null) {
-                throw new RuleException("User not authenticated");
+                throw new RuleException("User.not.authenticated");
             }
 
             // یافتن کاربر بر اساس نام کاربری
             User currentUser = userService.getUserByUsername(principal.getName())
-                    .orElseThrow(() -> new RuleException("User not found"));
+                    .orElseThrow(() -> new RuleException("User.not.found"));
 
             Comment comment = commentMapper.toEntity(commentRequestDTO);
             comment.setAuthorName(currentUser.getFullName());
@@ -71,13 +71,11 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error creating comment: " + e.getMessage());
+            throw new RuleException("Error.creating.comment");
         }
     }
 
-    /**
-     * به‌روزرسانی کامنت - فقط نویسنده کامنت یا ادمین
-     */
+
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CommentResponseDTO> updateComment(
@@ -88,10 +86,10 @@ public class CommentController {
         try {
             // بررسی مالکیت کامنت
             Comment existingComment = commentService.getCommentById(id)
-                    .orElseThrow(() -> new RuleException("Comment not found"));
+                    .orElseThrow(() -> new RuleException("Comment.not.found"));
 
             if (!isCommentOwner(existingComment, currentUser) && !isAdmin(currentUser)) {
-                throw new RuleException("You can only update your own comments");
+                throw new RuleException("You.can.only.update.your.own.comments");
             }
 
             Comment comment = commentMapper.toEntity(commentRequestDTO);
@@ -103,7 +101,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error updating comment: " + e.getMessage());
+            throw new RuleException("Error.updating.comment");
         }
     }
 
@@ -119,10 +117,10 @@ public class CommentController {
         try {
             // بررسی مالکیت کامنت
             Comment existingComment = commentService.getCommentById(id)
-                    .orElseThrow(() -> new RuleException("Comment not found"));
+                    .orElseThrow(() -> new RuleException("Comment.not.found"));
 
             if (!isCommentOwner(existingComment, currentUser) && !isAdmin(currentUser)) {
-                throw new RuleException("You can only delete your own comments");
+                throw new RuleException("You.can.only.delete.your.own.comments");
             }
 
             commentService.deleteComment(id);
@@ -131,7 +129,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error deleting comment: " + e.getMessage());
+            throw new RuleException("Error.deleting.comment");
         }
     }
 
@@ -142,11 +140,11 @@ public class CommentController {
     public ResponseEntity<CommentResponseDTO> getCommentById(@PathVariable Long id) {
         try {
             Comment comment = commentService.getCommentById(id)
-                    .orElseThrow(() -> new RuleException("Comment not found with ID: " + id));
+                    .orElseThrow(() -> new RuleException("Comment.not.found.with.ID"));
 
             // فقط کامنت‌های تأیید شده یا کامنت‌های کاربر خودش
             if (!comment.isApproved()) {
-                throw new RuleException("Comment is not approved yet");
+                throw new RuleException("Comment.is.not.approved.yet");
             }
 
             CommentResponseDTO responseDTO = commentMapper.toDTO(comment);
@@ -155,7 +153,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error retrieving comment: " + e.getMessage());
+            throw new RuleException("Error.retrieving.comment");
         }
     }
 
@@ -177,7 +175,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error retrieving comments: " + e.getMessage());
+            throw new RuleException("Error.retrieving.comments");
         }
     }
 
@@ -198,15 +196,13 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error retrieving comments: " + e.getMessage());
+            throw new RuleException("Error.retrieving.comments");
         }
     }
 
     // ==================== مدیریت کامنت‌ها (فقط ادمین) ====================
 
-    /**
-     * دریافت تمام کامنت‌های در انتظار تأیید - فقط ادمین
-     */
+
     @GetMapping("/pending")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CommentResponseDTO>> getPendingComments() {
@@ -221,13 +217,11 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error retrieving pending comments: " + e.getMessage());
+            throw new RuleException("Error.retrieving.pending.comments");
         }
     }
 
-    /**
-     * دریافت کامنت‌های در انتظار تأیید یک پست - فقط ادمین
-     */
+     
     @GetMapping("/post/{postId}/pending")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CommentResponseDTO>> getPendingCommentsByPostId(@PathVariable Long postId) {
@@ -242,7 +236,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error retrieving pending comments: " + e.getMessage());
+            throw new RuleException("Error.retrieving.pending.comments");
         }
     }
 
@@ -255,7 +249,7 @@ public class CommentController {
         try {
             commentService.approveComment(id);
             Comment comment = commentService.getCommentById(id)
-                    .orElseThrow(() -> new RuleException("Comment not found"));
+                    .orElseThrow(() -> new RuleException("Comment.not.found"));
 
             CommentResponseDTO responseDTO = commentMapper.toDTO(comment);
             return ResponseEntity.ok(responseDTO);
@@ -263,7 +257,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error approving comment: " + e.getMessage());
+            throw new RuleException("Error.approving.comment");
         }
     }
 
@@ -280,7 +274,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error rejecting comment: " + e.getMessage());
+            throw new RuleException("Error.rejecting.comment");
         }
     }
 
@@ -303,7 +297,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error retrieving deleted comments: " + e.getMessage());
+            throw new RuleException("Error.retrieving.deleted.comments");
         }
     }
 
@@ -316,7 +310,7 @@ public class CommentController {
         try {
             commentService.restoreComment(id);
             Comment comment = commentService.getCommentById(id)
-                    .orElseThrow(() -> new RuleException("Comment not found"));
+                    .orElseThrow(() -> new RuleException("Comment.not.found"));
 
             CommentResponseDTO responseDTO = commentMapper.toDTO(comment);
             return ResponseEntity.ok(responseDTO);
@@ -324,7 +318,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error restoring comment: " + e.getMessage());
+            throw new RuleException("Error.restoring.comment");
         }
     }
 
@@ -341,7 +335,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error permanently deleting comment: " + e.getMessage());
+            throw new RuleException("Error.permanently.deleting.comment");
         }
     }
 
@@ -366,7 +360,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error retrieving your comments: " + e.getMessage());
+            throw new RuleException("Error.retrieving.your.comments");
         }
     }
 
@@ -391,7 +385,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error retrieving your comments: " + e.getMessage());
+            throw new RuleException("Error.retrieving.your.comments");
         }
     }
 
@@ -409,7 +403,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error counting comments: " + e.getMessage());
+            throw new RuleException("Error.counting.comments");
         }
     }
 
@@ -426,7 +420,7 @@ public class CommentController {
         } catch (RuleException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuleException("Error counting pending comments: " + e.getMessage());
+            throw new RuleException("Error.counting.pending.comments");
         }
     }
 

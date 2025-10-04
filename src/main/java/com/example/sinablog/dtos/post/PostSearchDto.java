@@ -12,7 +12,7 @@ public class PostSearchDto {
     private String sortBy;
     private String sortDirection;
 
-    // Getters and Setters
+
     public String getKeyword() {
         return keyword;
     }

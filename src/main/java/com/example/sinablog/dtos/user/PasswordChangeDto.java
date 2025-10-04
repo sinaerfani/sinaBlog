@@ -5,17 +5,17 @@ import jakarta.validation.constraints.Size;
 
 public class PasswordChangeDto {
 
-    @NotBlank(message = "Current password is required")
+    @NotBlank(message = "Current.password.is.required")
     private String currentPassword;
 
-    @NotBlank(message = "New password is required")
-    @Size(min = 6, message = "New password must be at least 6 characters")
+    @NotBlank(message = "New.password.is.required")
+    @Size(min = 6, message = "New.password.must.be.at.least.6.characters")
     private String newPassword;
 
-    @NotBlank(message = "Password confirmation is required")
+    @NotBlank(message = "Password.confirmation.is.required")
     private String confirmPassword;
 
-    // Getters and Setters
+
     public String getCurrentPassword() {
         return currentPassword;
     }

@@ -1,4 +1,4 @@
-package com.example.sinablog.controller.tag;
+package com.example.sinablog.cotroller;
 
 import com.example.sinablog.Service.Tag.TagService;
 import com.example.sinablog.customeExeption.RuleException;
@@ -41,7 +41,7 @@ public class TagController {
     @GetMapping("/{id}")
     public ResponseEntity<TagResponseDto> getTagById(@PathVariable Long id) {
         Tag tag = tagService.getTagById(id)
-                .orElseThrow(() -> new RuleException("Tag    not found with ID"));;
+                .orElseThrow(() -> new RuleException("Tag.not.found.with.ID"));;
         TagResponseDto response = new TagResponseDto(
                 tag.getId(),
                 tag.getName(),

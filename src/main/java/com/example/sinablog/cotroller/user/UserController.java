@@ -33,7 +33,6 @@ public class UserController {
         this.roleService = roleService;
     }
 
-    // دریافت همه کاربران (فقط ادمین)
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<UserResponseDto>> getAllUsers(Pageable pageable) {
@@ -46,11 +45,11 @@ public class UserController {
         }
     }
 
-    // دریافت کاربر بر اساس ID (ادمین یا خود کاربر)
+
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
         try {
-            // بررسی دسترسی
+
             checkUserAccess(id);
 
             User user = userService.getUserById(id)
@@ -64,7 +63,6 @@ public class UserController {
         }
     }
 
-    // دریافت پروفایل کاربر جاری
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> getCurrentUserProfile() {
         try {
@@ -80,18 +78,18 @@ public class UserController {
         }
     }
 
-    // به‌روزرسانی کاربر (ادمین یا خود کاربر)
+
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id,
                                                       @Valid @RequestBody UserUpdateDto updateDto) {
         try {
-            // بررسی دسترسی
+
             checkUserAccess(id);
 
             User user = userService.getUserById(id)
                     .orElseThrow(() -> new RuleException("User not found with ID: " + id));
 
-            // به‌روزرسانی فیلدها
+
             if (updateDto.getUsername() != null) {
                 user.setUsername(updateDto.getUsername());
             }
@@ -117,7 +115,7 @@ public class UserController {
         }
     }
 
-    // تغییر وضعیت کاربر (فقط ادمین)
+
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> changeUserStatus(@PathVariable Long id,
@@ -135,12 +133,12 @@ public class UserController {
         }
     }
 
-    // تغییر رمز عبور (خود کاربر)
+
     @PostMapping("/{id}/change-password")
     public ResponseEntity<String> changePassword(@PathVariable Long id,
                                                  @Valid @RequestBody PasswordChangeDto passwordDto) {
         try {
-            // بررسی دسترسی
+
             checkUserAccess(id);
 
             userService.changePassword(id, passwordDto.getCurrentPassword(), passwordDto.getNewPassword());
@@ -152,11 +150,11 @@ public class UserController {
         }
     }
 
-    // حذف کاربر (Soft Delete - خود کاربر یا ادمین)
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         try {
-            // بررسی دسترسی
+
             checkUserAccess(id);
 
             userService.deleteUser(id);
@@ -168,7 +166,7 @@ public class UserController {
         }
     }
 
-    // بازیابی کاربر حذف شده (فقط ادمین)
+
     @PostMapping("/{id}/restore")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> restoreUser(@PathVariable Long id) {
@@ -185,7 +183,6 @@ public class UserController {
         }
     }
 
-    // دریافت کاربران بر اساس نقش (فقط ادمین)
     @GetMapping("/role/{roleName}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getUsersByRole(@PathVariable RoleName roleName) {
@@ -201,7 +198,7 @@ public class UserController {
         }
     }
 
-    // بررسی وضعیت ادمین بودن کاربر جاری
+
     @GetMapping("/check-admin")
     public ResponseEntity<String> checkAdminStatus() {
         try {
@@ -213,7 +210,7 @@ public class UserController {
         }
     }
 
-    // دریافت کاربران حذف شده (فقط ادمین)
+
     @GetMapping("/deleted")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getDeletedUsers() {
@@ -229,7 +226,7 @@ public class UserController {
         }
     }
 
-    // متدهای کمکی برای گرفتن اطلاعات کاربر جاری
+
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {

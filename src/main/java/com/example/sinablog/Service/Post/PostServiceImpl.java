@@ -84,7 +84,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Optional<Post> getPostBySlug(String slug) {
         if (slug == null || slug.trim().isEmpty()) {
-            throw new RuleException("Slug cannot be empty");
+            throw new RuleException("Slug.cannot.be.empty");
         }
         return postRepository.findBySlugAndDisableDateIsNull(slug);
     }
@@ -198,10 +198,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public void restorePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuleException("Post not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("Post.not.found.with.ID"));
 
         if (post.getDisableDate() == null) {
-            throw new RuleException("Post is not deleted");
+            throw new RuleException("Post.is.not.deleted");
         }
 
         post.setDisableDate(null);
@@ -213,7 +213,7 @@ public class PostServiceImpl implements PostService {
     @PreAuthorize("hasRole('ADMIN')")
     public void permanentDeletePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuleException("Post not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("Post.not.found.with.ID"));
         postRepository.delete(post);
     }
 
@@ -313,11 +313,11 @@ public class PostServiceImpl implements PostService {
     }
 
 
-    // ==================== متدهای کمکی ====================
+
 
     private Post getActivePostById(Long id) {
         return postRepository.findByIdAndDisableDateIsNull(id)
-                .orElseThrow(() -> new RuleException("Post not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("Post.not.found.with.ID"));
     }
 
     private void performSoftDelete(Post post) {
@@ -336,40 +336,40 @@ public class PostServiceImpl implements PostService {
 
     private void validatePost(Post post) {
         if (post == null) {
-            throw new RuleException("Post cannot be null");
+            throw new RuleException("Post.cannot.be.null");
         }
         if (post.getTitle() == null || post.getTitle().trim().isEmpty()) {
-            throw new RuleException("Post title cannot be empty");
+            throw new RuleException("Post.title.cannot.be.empty");
         }
         if (post.getContent() == null || post.getContent().trim().isEmpty()) {
-            throw new RuleException("Post content cannot be empty");
+            throw new RuleException("Post.content.cannot.be.empty");
         }
         if (post.getAuthor() == null || post.getAuthor().getId() == null) {
-            throw new RuleException("Post must have an author");
+            throw new RuleException("Post.must.have.an.author");
         }
     }
 
     private void validateId(Long id, String fieldName) {
         if (id == null) {
-            throw new RuleException(fieldName + " cannot be null");
+            throw new RuleException("cannot.be.null");
         }
     }
 
     private void validateStatus(PostStatus status) {
         if (status == null) {
-            throw new RuleException("Status cannot be null");
+            throw new RuleException("Status.cannot.be.null");
         }
     }
 
     private void validateKeyword(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
-            throw new RuleException("Search keyword cannot be empty");
+            throw new RuleException("Search.keyword.cannot.be.empty");
         }
     }
 
     private void validateLimit(int limit) {
         if (limit <= 0) {
-            throw new RuleException("Limit must be greater than 0");
+            throw new RuleException("Limit.must.be.greater.than.0");
         }
     }
 }

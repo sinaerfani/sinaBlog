@@ -20,7 +20,7 @@ public class CommentMapper {
 
         // تنظیم post از طریق ID
         Post post = postRepository.findById(dto.getPostId())
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> new RuntimeException("Post.not.found"));
         comment.setPost(post);
 
         return comment;

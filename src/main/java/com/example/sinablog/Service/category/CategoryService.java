@@ -1,4 +1,4 @@
-package com.example.sinablog.Service.categoryService;
+package com.example.sinablog.Service.category;
 
 
 import com.example.sinablog.model.Category;

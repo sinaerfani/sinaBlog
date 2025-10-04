@@ -67,7 +67,7 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // ایجاد سشن
+
             HttpSession session = request.getSession(true);
             session.setAttribute(
                     HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -109,7 +109,7 @@ public class AuthController {
             }
             SecurityContextHolder.clearContext();
 
-            // پاک کردن کوکی
+
             Cookie cookie = new Cookie("JSESSIONID", null);
             cookie.setPath("/");
             cookie.setHttpOnly(true);
@@ -144,7 +144,7 @@ public class AuthController {
     }
 
 
-    // متدهای کمکی
+
     private User convertToEntity(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());

@@ -1,6 +1,6 @@
 package com.example.sinablog.cotroller;
 
-import com.example.sinablog.Service.categoryService.CategoryService;
+import com.example.sinablog.Service.category.CategoryService;
 import com.example.sinablog.customeExeption.RuleException;
 import com.example.sinablog.dtos.Category.CategoryMapper;
 import com.example.sinablog.dtos.Category.CategoryRequestDTO;
@@ -32,7 +32,7 @@ public class CategoryController {
         this.categoryMapper = categoryMapper;
     }
 
-    // ==================== CREATE ====================
+
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('EDITOR')")
@@ -46,12 +46,12 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    // ==================== READ ====================
+
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable Long id) {
         Category category = categoryService.getCategoryById(id)
-                .orElseThrow(() -> new RuleException("Category not found with id"));
+                .orElseThrow(() -> new RuleException("Category.not.found.with.ID"));
 
         CategoryResponseDTO responseDTO = categoryMapper.toDTO(category);
         return ResponseEntity.ok(responseDTO);
@@ -60,7 +60,7 @@ public class CategoryController {
     @GetMapping("/name/{name}")
     public ResponseEntity<CategoryResponseDTO> getCategoryByName(@PathVariable String name) {
         Category category = categoryService.getCategoryByName(name)
-                .orElseThrow(() -> new RuleException("Category not found with name"));
+                .orElseThrow(() -> new RuleException("Category.not.found.with.name"));
 
         CategoryResponseDTO responseDTO = categoryMapper.toDTO(category);
         return ResponseEntity.ok(responseDTO);
@@ -69,7 +69,7 @@ public class CategoryController {
     @GetMapping("/slug/{slug}")
     public ResponseEntity<CategoryResponseDTO> getCategoryBySlug(@PathVariable String slug) {
         Category category = categoryService.getCategoryBySlug(slug)
-                .orElseThrow(() -> new RuleException("Category not found with slug"));
+                .orElseThrow(() -> new RuleException("Category.not.found.with.slug"));
 
         CategoryResponseDTO responseDTO = categoryMapper.toDTO(category);
         return ResponseEntity.ok(responseDTO);
@@ -107,7 +107,6 @@ public class CategoryController {
         return ResponseEntity.ok(responseDTOs);
     }
 
-    // ==================== UPDATE ====================
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('EDITOR')")
@@ -122,7 +121,7 @@ public class CategoryController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    // ==================== DELETE ====================
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('EDITOR')")
@@ -131,7 +130,7 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
-    // ==================== DELETED CATEGORIES ====================
+
 
     @GetMapping("/deleted")
     @PreAuthorize("hasRole('ADMIN')")
@@ -150,7 +149,7 @@ public class CategoryController {
         categoryService.restoreCategory(id);
 
         Category category = categoryService.getCategoryById(id)
-                .orElseThrow(() -> new RuleException("Category not found after restoration"));
+                .orElseThrow(() -> new RuleException("Category.not.found.after.restoration"));
 
         CategoryResponseDTO responseDTO = categoryMapper.toDTO(category);
         return ResponseEntity.ok(responseDTO);
@@ -163,7 +162,7 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
-    // ==================== COUNT ====================
+
 
     @GetMapping("/count")
     public ResponseEntity<Long> countAllCategories() {
@@ -178,7 +177,6 @@ public class CategoryController {
         return ResponseEntity.ok(count);
     }
 
-    // ==================== EXISTS ====================
 
     @GetMapping("/exists/name/{name}")
     public ResponseEntity<Boolean> existsByName(@PathVariable String name) {
@@ -192,7 +190,6 @@ public class CategoryController {
         return ResponseEntity.ok(exists);
     }
 
-    // ==================== EXCEPTION HANDLER ====================
 
     @ExceptionHandler(RuleException.class)
     public ResponseEntity<String> handleRuleException(RuleException ex) {
@@ -202,7 +199,7 @@ public class CategoryController {
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("Access denied. You don't have permission to perform this action.");
+                .body("Access.denied.You.don't.have.permission.to.perform.this.action.");
     }
 
     @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)

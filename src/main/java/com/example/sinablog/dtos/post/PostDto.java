@@ -12,17 +12,17 @@ public class PostDto {
 
     private Long id;
 
-    @NotBlank(message = "Title is required")
-    @Size(min = 3, max = 200, message = "Title must be between 3 and 200 characters")
+    @NotBlank(message = "Title.is.required")
+    @Size(min = 3, max = 200, message = "Title.must.be.between.3.and.200.characters")
     private String title;
 
     private String slug;
 
-    @NotBlank(message = "Content is required")
-    @Size(min = 10, message = "Content must be at least 10 characters")
+    @NotBlank(message = "Content.is.required")
+    @Size(min = 10, message = "Content.must.be.at.least.10.characters")
     private String content;
 
-    @Size(max = 500, message = "Excerpt must be less than 500 characters")
+    @Size(max = 500, message = "Excerpt.must.be.less.than.500.characters")
     private String excerpt;
 
     private PostStatus status;

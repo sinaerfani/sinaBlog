@@ -25,8 +25,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF برای REST API معمولاً غیرفعال
-                .cors(cors -> {}) // از CorsConfigurationSource استفاده می‌کنیم
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/css/**", "/js/**", "/images/**", "/static/**",
@@ -50,13 +50,13 @@ public class SecurityConfig {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         AccessDeniedHandlerImpl handler = new AccessDeniedHandlerImpl();
-        handler.setErrorPage("/403"); // مسیر صفحه 403
+        handler.setErrorPage("/403");
         return handler;
     }
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // آدرس فرانت
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
 
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         configuration.setAllowCredentials(true);

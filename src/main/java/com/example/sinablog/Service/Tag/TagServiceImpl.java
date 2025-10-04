@@ -31,11 +31,11 @@ public class TagServiceImpl implements  TagService
 
 
         if (tag.getName() == null || tag.getName().trim().isEmpty()) {
-            throw new RuleException("Tag name cannot be null or empty");
+            throw new RuleException("Tag.name.cannot.be.null.or.empty");
         }
 
         if (tagRepository.existsByName(tag.getName())) {
-            throw new RuleException("Tag already exists");
+            throw new RuleException("Tag.already.exists");
         }
 
         if (tag.getSlug() == null || tag.getSlug().trim().isEmpty()) {
@@ -43,7 +43,7 @@ public class TagServiceImpl implements  TagService
         }
 
         if (tagRepository.existsBySlug(tag.getSlug())) {
-            throw new RuleException("Tag with slug  already exists");
+            throw new RuleException("Tag.with.slug.already.exists");
         }
 
         return tagRepository.save(tag);
@@ -53,17 +53,17 @@ public class TagServiceImpl implements  TagService
     public Tag updateTag(Long id, Tag tag) {
 
         if (id == null) {
-            throw new RuleException("Tag ID cannot be null");
+            throw new RuleException("Tag.ID.cannot.be.null");
         }
 
         Tag existingTag = tagRepository.findById(id)
-                .orElseThrow(() -> new RuleException("Tag not found with ID: " + id));
+                .orElseThrow(() -> new RuleException("Tag.not.found.with.ID"));
 
         if (tag.getName() != null && !tag.getName().trim().isEmpty()) {
             // بررسی تکراری نبودن name
             if (!existingTag.getName().equals(tag.getName()) &&
                     tagRepository.existsByName(tag.getName())) {
-                throw new RuleException("Tag already exists");
+                throw new RuleException("Tag.already.exists");
             }
             existingTag.setName(tag.getName());
         }
@@ -72,7 +72,7 @@ public class TagServiceImpl implements  TagService
             // بررسی تکراری نبودن slug
             if (!existingTag.getSlug().equals(tag.getSlug()) &&
                     tagRepository.existsBySlug(tag.getSlug())) {
-                throw new RuleException("Tag with slug '" + tag.getSlug() + "' already exists");
+                throw new RuleException("Tag.with.slug.already.exists");
             }
             existingTag.setSlug(tag.getSlug());
         }
@@ -83,15 +83,15 @@ public class TagServiceImpl implements  TagService
     @Override
     public void deleteTag(Long id) {
         if (id == null) {
-            throw new RuleException("Tag ID cannot be null");
+            throw new RuleException("Tag.ID.cannot.be.null");
         }
 
         Tag tag = tagRepository.findById(id)
-                .orElseThrow(() -> new RuleException("Tag not found with ID"));
+                .orElseThrow(() -> new RuleException("Tag.not.found.with.ID"));
 
         // بررسی اینکه تگ در حال استفاده نباشد
         if (tag.getPosts() != null && !tag.getPosts().isEmpty()) {
-            throw new RuleException("Cannot delete tag. There are posts assigned to this tag.");
+            throw new RuleException("Cannot.delete.tag.There.are.posts.assigned.to.this.tag");
         }
 
         tagRepository.delete(tag);
@@ -100,7 +100,7 @@ public class TagServiceImpl implements  TagService
     @Override
     public Optional<Tag> getTagById(Long id) {
         if (id == null) {
-            throw new RuleException("Tag ID cannot be null");
+            throw new RuleException("Tag.ID.cannot.be.null");
         }
 
         return tagRepository.findById(id);
@@ -110,7 +110,7 @@ public class TagServiceImpl implements  TagService
     public Optional<Tag> getTagByName(String name) {
 
         if (name == null || name.trim().isEmpty()) {
-            throw new RuleException("Tag name cannot be null or empty");
+            throw new RuleException("Tag.name.cannot.be.null.or.empty");
         }
 
         return tagRepository.findByName(name);
@@ -120,7 +120,7 @@ public class TagServiceImpl implements  TagService
     public Optional<Tag> getTagBySlug(String slug) {
 
         if (slug == null || slug.trim().isEmpty()) {
-            throw new RuleException("Tag slug cannot be null or empty");
+            throw new RuleException("Tag.slug.cannot.be.null.or.empty");
         }
 
         return tagRepository.findBySlug(slug);
@@ -136,30 +136,11 @@ public class TagServiceImpl implements  TagService
         return tagRepository.findAll(pageable);
     }
 
-    @Override
-    public List<Tag> searchTagsByName(String name) {
-
-        if (name == null || name.trim().isEmpty()) {
-            throw new RuleException("Search name cannot be null or empty");
-        }
-
-        return tagRepository.findByNameContainingIgnoreCase(name);
-    }
-
-    @Override
-    public List<Tag> searchTagsBySlug(String slug) {
-
-        if (slug == null || slug.trim().isEmpty()) {
-            throw new RuleException("Search slug cannot be null or empty");
-        }
-
-        return tagRepository.findBySlugContaining(slug);
-    }
 
     @Override
     public boolean existsByName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new RuleException("Tag name cannot be null or empty");
+            throw new RuleException("Tag.name.cannot.be.null.or.empty");
         }
 
         return tagRepository.existsByName(name);
@@ -168,26 +149,19 @@ public class TagServiceImpl implements  TagService
     @Override
     public boolean existsBySlug(String slug) {
         if (slug == null || slug.trim().isEmpty()) {
-            throw new RuleException("Tag slug cannot be null or empty");
+            throw new RuleException("Tag.slug.cannot.be.null.or.empty");
         }
 
         return tagRepository.existsBySlug(slug);
     }
 
-    @Override
-    public long countTags() {
-        try {
-            return tagRepository.count();
-        } catch (Exception e) {
-            throw new RuleException("Failed to count tags");
-        }
-    }
+
 
     @Override
     public List<Tag> getTagsByPostId(Long postId) {
 
         if (postId == null) {
-            throw new RuleException("Post ID cannot be null");
+            throw new RuleException("Post.ID.cannot.be.null");
         }
 
         return tagRepository.findByPosts_Id(postId);
